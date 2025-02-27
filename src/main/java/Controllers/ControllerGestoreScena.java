@@ -1,6 +1,6 @@
 package Controllers;
 
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import Interfacce.ICambioScena;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -87,10 +87,8 @@ public class ControllerGestoreScena extends ControllerDB {
             FXMLLoader loader = new FXMLLoader(ControllerGestoreScena.class.getResource(percorsoFXML));
             Parent nuovaVista = loader.load();
 
-            Object subController = loader.getController();
-            if (subController instanceof ControllerBase) {
-                ((ControllerBase<ICambioScena>) subController).setController(controller);
-            }
+            IControllerBase<ICambioScena> subController = loader.getController();
+            subController.setController(controller);
 
             contenitore.getChildren().clear();
             contenitore.getChildren().add(nuovaVista);

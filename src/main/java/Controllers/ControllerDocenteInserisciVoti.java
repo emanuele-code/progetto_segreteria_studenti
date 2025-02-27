@@ -2,7 +2,7 @@ package Controllers;
 
 import Commands.CommandInserisciVoto;
 import Commands.CommandGetPrenotazioni;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ControllerDocenteInserisciVoti implements ControllerBase<ControllerDocente> {
+public class ControllerDocenteInserisciVoti implements IControllerBase<ControllerDocente> {
 
     @FXML private TableView   TableInserisciVoti;
     @FXML private TableColumn ColonnaMatricola;

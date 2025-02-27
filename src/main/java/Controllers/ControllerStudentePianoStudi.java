@@ -1,7 +1,7 @@
 package Controllers;
 
 import Commands.CommandGetLibretto;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -15,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class ControllerStudentePianoStudi implements ControllerBase<ControllerStudente> {
+public class ControllerStudentePianoStudi implements IControllerBase<ControllerStudente> {
 
     @FXML private TableView   TableEsami;
     @FXML private TableColumn ColonnaCodice;

@@ -3,7 +3,7 @@ package Controllers;
 import Commands.CommandRicercaStudente;
 import Commands.RicercaStudentePerCredenziali;
 import Commands.RicercaStudentePerMatricola;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import Interfacce.IRicercaStudenteStrategy;
 import Interfacce.IStudente;
 import javafx.collections.FXCollections;
@@ -19,7 +19,7 @@ import java.util.List;
 
 
 
-public class ControllerSegreteriaVisualizzaInfoForm implements ControllerBase<ControllerSegreteria> {
+public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<ControllerSegreteria> {
 
     @FXML private TableView   tableRicerca;
     @FXML private TableColumn ColonnaNome;

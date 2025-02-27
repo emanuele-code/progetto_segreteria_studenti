@@ -2,8 +2,7 @@ package Controllers;
 
 import Commands.CommandGetAppelliPerStudente;
 import Commands.CommandPrenotaEsame;
-import Interfacce.ControllerBase;
-import Interfacce.ControllerBaseStudente;
+import Interfacce.IControllerBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -14,16 +13,21 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class ControllerStudentePrenotazione implements ControllerBase<ControllerStudente> {
+public class ControllerStudentePrenotazione implements IControllerBase<ControllerStudente> {
     private ControllerStudente controllerStudente;
 
-    @FXML private TableView   tablePrenotazione;
-    @FXML private TableColumn colonnaDocente;
-    @FXML private TableColumn colonnaData;
-    @FXML private TableColumn colonnaNomeEsame;
-    @FXML private TableColumn colonnaPrenotazione;
-    @FXML private TableColumn colonnaNumeroAppello;
-    @FXML private TableColumn colonnaDisponibile;
+    @FXML public TableView   tablePrenotazione;
+    @FXML public TableColumn colonnaDocente;
+    @FXML public TableColumn colonnaData;
+    @FXML public TableColumn colonnaNomeEsame;
+    @FXML public TableColumn colonnaPrenotazione;
+    @FXML public TableColumn colonnaNumeroAppello;
+    @FXML public TableColumn colonnaDisponibile;
+
+
+    public void initialize(){
+
+    }
 
     @Override
     public void setController(ControllerStudente controllerStudente) throws SQLException {
@@ -102,7 +106,7 @@ public class ControllerStudentePrenotazione implements ControllerBase<Controller
         String matricola     = selectedItem.getMatricola();
         String numeroAppello = selectedItem.getNumeroAppello();
 
-        Alert alert = controllerStudente.mostraConferma("Quest azione è irreversibile");
+        Alert alert = ControllerAlert.mostraConferma("Quest azione è irreversibile", "Conferma Prenotazione", "Sei sicuro di voler confermare la prenotazione?");
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 controllerStudente.studente.setCommand(new CommandPrenotaEsame(controllerStudente.connection, numeroAppello ,matricola));

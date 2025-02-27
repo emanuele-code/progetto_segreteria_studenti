@@ -2,7 +2,7 @@ package Controllers;
 
 import Commands.CommandConfermaVoti;
 import Commands.CommandGetEsiti;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-public class ControllerStudenteEsitiForm implements ControllerBase<ControllerStudente> {
+public class ControllerStudenteEsitiForm implements IControllerBase<ControllerStudente> {
 
     private ControllerStudente controllerStudente;
 

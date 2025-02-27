@@ -2,7 +2,7 @@ package Controllers;
 
 import Commands.CommandConfermaVoto;
 import Commands.CommandGetVotiDaConfermare;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
 
-public class ControllerSegreteriaConfermaVoti implements ControllerBase<ControllerSegreteria> {
+public class ControllerSegreteriaConfermaVoti implements IControllerBase<ControllerSegreteria> {
 
     private ControllerSegreteria controllerSegreteria;
 

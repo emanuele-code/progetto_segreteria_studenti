@@ -1,13 +1,13 @@
 package Controllers;
 
 import Commands.CommandInserisciStudente;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
-public class ControllerSegreteriaInserisciStudente implements ControllerBase<ControllerSegreteria> {
+public class ControllerSegreteriaInserisciStudente implements IControllerBase<ControllerSegreteria> {
 
     private ControllerSegreteria controllerSegreteria;
 

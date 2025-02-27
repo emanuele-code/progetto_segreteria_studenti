@@ -3,7 +3,7 @@ package Controllers;
 import Commands.CommandChiudiPrenotazione;
 import Commands.CommandGetAppelliPerDocente;
 import Commands.CommandInserisciAppello;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
-public class ControllerDocenteInserimentoAppello implements ControllerBase<ControllerDocente> {
+public class ControllerDocenteInserimentoAppello implements IControllerBase<ControllerDocente> {
     private ControllerDocente controllerDocente;
 
     @FXML private TableView   TabellaAppelli;

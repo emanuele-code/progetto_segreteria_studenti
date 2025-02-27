@@ -1,15 +1,14 @@
 package Controllers;
 
 import Commands.CommandCambiaPianoStudente;
-import Interfacce.ControllerBase;
+import Interfacce.IControllerBase;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 
 import java.sql.SQLException;
 
-public class ControllerSegreteriaCambioPiano implements ControllerBase<ControllerSegreteria> {
+public class ControllerSegreteriaCambioPiano implements IControllerBase<ControllerSegreteria> {
 
     private ControllerSegreteria controllerSegreteria;
     @FXML private ComboBox<String> CambiaPianoStudiDropDown;
