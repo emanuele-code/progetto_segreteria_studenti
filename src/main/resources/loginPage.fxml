@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="497.0"
+           prefWidth="780.0" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="Controllers.LoginController" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+      <AnchorPane prefHeight="497.0" prefWidth="720.0">
+         <children>
+            <BorderPane prefHeight="497.0" prefWidth="781.0">
+               <left>
+                  <AnchorPane prefHeight="497.0" prefWidth="461.0" style="-fx-background-color: #1A5D63;" BorderPane.alignment="CENTER">
+                     <children>
+                        <ImageView fitHeight="465.0" fitWidth="442.0" layoutX="10.0" layoutY="28.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@Images/immagineParthenope.png" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </AnchorPane>
+               </left>
+               <center>
+                  <AnchorPane prefHeight="497.0" prefWidth="217.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <TabPane fx:id="tabPane" layoutX="2.0" layoutY="8.0" prefHeight="489.0" prefWidth="317.0" tabClosingPolicy="UNAVAILABLE">
+                          <tabs>
+                            <Tab fx:id="segreteria" text="SEGRETERIA">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TextField fx:id="CredenzialiSegreteria" id="CredenzialiSegreteria" layoutX="53.0" layoutY="101.0" prefHeight="26.0" prefWidth="212.0" promptText="Email" />
+                                          <Button fx:id="LoginSegreteria" id="LoginSegreteria" layoutX="106.0" layoutY="232.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="Login" onAction="#handleLogin"/>
+                                          <PasswordField fx:id="PasswordSegreteria" id="passwordSegreteria" layoutX="53.0" layoutY="148.0" prefHeight="26.0" prefWidth="213.0" promptText="Password" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                            <Tab fx:id="studente" text="STUDENTE">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TextField fx:id="CredenzialiStudente" id="CredenzialiStudente" layoutX="53.0" layoutY="101.0" prefHeight="26.0" prefWidth="212.0" promptText="Matricola" />
+                                          <Button fx:id="LoginStudente" id="LoginStudente" layoutX="106.0" layoutY="232.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="Login" onAction="#handleLogin"/>
+                                          <PasswordField fx:id="PasswordStudente" id="passwordStudente" layoutX="53.0" layoutY="148.0" prefHeight="26.0" prefWidth="213.0" promptText="Password" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </Tab>
+                              <Tab fx:id="docente" text="DOCENTE">
+                                 <content>
+                                    <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                                       <children>
+                                          <TextField fx:id="CredenzialiDocente" id="CredenzialeDocente" layoutX="53.0" layoutY="101.0" prefHeight="26.0" prefWidth="212.0" promptText="Codice Fiscale" />
+                                          <Button fx:id="LoginDocente" id="LoginDocente" layoutX="106.0" layoutY="232.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="107.0" text="Login" onAction="#handleLogin"/>
+                                          <PasswordField fx:id="PasswordDocente" id="passwordDocente" layoutX="53.0" layoutY="148.0" prefHeight="26.0" prefWidth="213.0" promptText="Password" />
+                                       </children>
+                                    </AnchorPane>
+                                 </content>
+                              </Tab>
+                          </tabs>
+                        </TabPane>
+                     </children>
+                  </AnchorPane>
+               </center>
+            </BorderPane>
+         </children>
+      </AnchorPane>
+   </children>
+</StackPane>

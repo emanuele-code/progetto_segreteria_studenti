@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Text?>
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerSegreteriaVisualizzaInfoForm" prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <TableView  fx:id="tableRicerca"      prefHeight="395.0" prefWidth="574.0">
+            <columns>
+                <TableColumn id="ColonnaNome"        fx:id="ColonnaNome"        prefWidth="81.0"  text="Nome" />
+                <TableColumn id="ColonnaCognome"     fx:id="ColonnaCognome"     prefWidth="110.0" text="Cognome" />
+                <TableColumn id="ColonnaDataNascita" fx:id="ColonnaDataNascita" prefWidth="121.0" text="Data di Nascita" />
+                <TableColumn id="ColonnaNomePiano"   fx:id="ColonnaNomePiano"   prefWidth="121.0" text="Nome Piano" />
+                <TableColumn id="ColonnaNomeEsame"   fx:id="ColonnaNomeEsame"   prefWidth="121.0" text="Nome Esame" />
+                <TableColumn id="ColonnaVoto"        fx:id="ColonnaVoto"        prefWidth="42.0"  text="Voto" />
+                <TableColumn id="ColonnaCFU"         fx:id="ColonnaCFU"         prefWidth="39.0"  text="CFU" />
+                <TableColumn id="ColonnaTasse"       fx:id="ColonnaTasse"       prefWidth="43.0"  text="Tasse" />
+                <TableColumn id="ColonnaResidenza"   fx:id="ColonnaResidenza"   prefWidth="138.0" text="Residenza" />
+            </columns>
+        </TableView>
+        <Button     id="CercaStudenteButton"  layoutX="461.0" layoutY="402.0" mnemonicParsing="false" text="Cerca Studente" onAction="#mostraFormModalitaRicerca"/>
+        <AnchorPane fx:id="visualizzaModalitaRicerca" layoutX="162.0" layoutY="73.0" prefHeight="300.0" prefWidth="250.0" style="-fx-background-color: lightgray;" visible="false">
+            <children>
+                <RadioButton id="radioMatricola" fx:id="RadioMatricola" layoutX="35.0" layoutY="188.0" mnemonicParsing="false" selected="true" text="Matricola" />
+                <RadioButton id="radioCredenziali" fx:id="RadioCredenziali" layoutX="35.0"  layoutY="215.0"                                    mnemonicParsing="false"                            text="Nome e cognome" />
+                <Button      id="ConfermaRicerca"  fx:id="ConfermaRicerca"  layoutX="141.0" layoutY="252.0" prefHeight="34.0" prefWidth="78.0" mnemonicParsing="false"   text="Cerca" onAction="#cercaStudente"/>
+                <Button      id="AnnullaRicerca"   fx:id="AnnullaRicerca"   layoutX="35.0"  layoutY="252.0" prefHeight="34.0" prefWidth="78.0" mnemonicParsing="false" text="Annulla" />
+                <Text layoutX="30.0" layoutY="177.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Come vuoi cercare lo studente?" />
+                <TextField   id="cercaPerCognome"  fx:id="cercaPerCognome"  layoutX="24.0"  layoutY="91.0"  prefHeight="25.0" prefWidth="203.0" promptText="cognome" visible="false" />
+                <TextField   id="cercaPerNome"     fx:id="cercaPerNome"     layoutX="24.0"  layoutY="43.0"  prefHeight="25.0" prefWidth="203.0" promptText="nome"    visible="false" />
+                <TextField   id="cercaMatricola"   fx:id="cercaMatricola"   layoutX="24.0"  layoutY="43.0"  prefHeight="25.0" prefWidth="203.0" promptText="matricola"/>
+            </children>
+        </AnchorPane>
+    </children>
+</AnchorPane>

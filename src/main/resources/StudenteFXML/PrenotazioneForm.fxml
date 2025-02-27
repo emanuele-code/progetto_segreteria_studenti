@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerStudentePrenotazione" prefHeight="400.0" prefWidth="600.0">
+    <children>
+        <TableView fx:id="tablePrenotazione" prefHeight="452.0" prefWidth="575.0">
+            <columns>
+                <TableColumn fx:id="colonnaNumeroAppello" prefWidth="111.0" text="ID Appello" />
+                <TableColumn fx:id="colonnaDocente"       prefWidth="111.0" text="Docente" />
+                <TableColumn fx:id="colonnaData"          prefWidth="104.0" text="Data" />
+                <TableColumn fx:id="colonnaNomeEsame"     prefWidth="104.0" text="Nome Esame" />
+                <TableColumn fx:id="colonnaDisponibile"   prefWidth="104.0" text="Stato" />
+                <TableColumn fx:id="colonnaPrenotazione"  prefWidth="104.0" text="Prenotazione" />
+            </columns>
+        </TableView>
+    </children>
+</AnchorPane>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerSegreteriaInserisciStudente" prefHeight="400.0" prefWidth="600.0" >
+    <children>
+        <TextField  id="TextNomeInserisciStudente" fx:id="TextNomeInserisciStudente" layoutX="132.0" layoutY="81.0" prefHeight="26.0" prefWidth="302.0" promptText="Nome" />
+        <TextField  id="TextCognomeInserisciStudente" fx:id="TextCognomeInserisciStudente" layoutX="133.0" layoutY="125.0" prefHeight="26.0" prefWidth="301.0" promptText="Cognome" />
+        <TextField  id="TextResidenzaInserisciStudente" fx:id="TextResidenzaInserisciStudente" layoutX="132.0" layoutY="167.0" prefHeight="26.0" prefWidth="302.0" promptText="Residenza" />
+        <DatePicker id="DataNascitaInserisciStudente" fx:id="DataNascitaInserisciStudente" layoutX="133.0" layoutY="254.0" prefHeight="26.0" prefWidth="300.0" promptText="Data Nascita" />
+        <ComboBox   id="PianoStudiDropDown" fx:id="PianoStudiDropDown" layoutX="283.0" layoutY="299.0" prefWidth="150.0" promptText="Piano studi" />
+        <Button     id="InserisciStudenteButton" fx:id="InserisciStudenteButton" layoutX="132.0" layoutY="391.0" mnemonicParsing="false" onAction="#inserisciStudente" prefHeight="25.0" prefWidth="302.0" text="INSERISCI STUDENTE" />
+        <TextField  id="TextPasswordInserisciStudente" fx:id="TextPasswordInserisciStudente" layoutX="133.0" layoutY="211.0" prefHeight="26.0" prefWidth="302.0" promptText="Password" />
+    </children>
+</AnchorPane>

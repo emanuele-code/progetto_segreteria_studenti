@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="160.0" prefWidth="100.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ControllerStudenteEsitiForm">
+    <children>
+        <Text layoutX="14.0" layoutY="35.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Votazione:" />
+        <Label fx:id="labelVoto" layoutX="79.0" layoutY="22.0" text="label2" />
+
+        <RadioButton fx:id="AccettaVotoRadioButton" layoutX="10.0" layoutY="59.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="120.0" text="Accetta Voto" />
+        <RadioButton fx:id="RifiutaVotoRadioButton" layoutX="10.0" layoutY="88.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="120.0" text="Rifiuta Voto" />
+
+    </children>
+</AnchorPane>

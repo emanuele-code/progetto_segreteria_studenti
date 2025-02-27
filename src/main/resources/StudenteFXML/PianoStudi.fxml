@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controllers.ControllerStudentePianoStudi">
+   <children>
+
+      <TableView fx:id="TableEsami" layoutY="137.0" prefHeight="264.0" prefWidth="600.0">
+        <columns>
+            <TableColumn fx:id="ColonnaCodice" prefWidth="108.0" text="Codice" />
+            <TableColumn fx:id="ColonnaNomeEsame" prefWidth="109.0" text="Nome Esame" />
+            <TableColumn fx:id="ColonnaCFU" minWidth="0.0" prefWidth="68.0" text="CFU" />
+            <TableColumn fx:id="ColonnaVoto" prefWidth="56.0" text="Voto" />
+            <TableColumn fx:id="ColonnaData" prefWidth="73.0" text="Data" />
+        </columns>
+      </TableView>
+
+      <Text layoutX="332.0" layoutY="80.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Matricola:">
+         <font> <Font name="System Bold" size="18.0" /> </font>
+      </Text>
+
+      <Text layoutX="60.0" layoutY="42.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Nome:">
+         <font> <Font name="System Bold" size="18.0" /> </font>
+      </Text>
+
+      <Text layoutX="31.0" layoutY="82.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Cognome:">
+         <font> <Font name="System Bold" size="18.0" /> </font>
+      </Text>
+
+      <Text layoutX="367.0" layoutY="41.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Tasse:">
+         <font> <Font name="System Bold" size="18.0" /> </font>
+      </Text>
+
+      <Label fx:id="LabelNome" layoutX="124.0" layoutY="21.0" text="Label">
+         <font> <Font size="18.0" /> </font>
+      </Label>
+
+      <Label fx:id="LabelCognome" layoutX="124.0" layoutY="61.0" text="Label">
+         <font> <Font size="18.0" /> </font>
+      </Label>
+
+      <Label fx:id="LabelMatricola" layoutX="428.0" layoutY="61.0" text="Label">
+         <font> <Font size="18.0" /> </font>
+      </Label>
+
+      <Label fx:id="LabelTasse" layoutX="428.0" layoutY="21.0" text="Label">
+         <font> <Font size="18.0" /> </font>
+      </Label>
+
+   </children>
+</AnchorPane>
