@@ -10,7 +10,6 @@ import javafx.scene.layout.AnchorPane;
 import java.sql.SQLException;
 
 public class ControllerStudente extends ControllerDB implements ICambioScena {
-
     protected IStudente studente;
 
     @FXML public Button     PrenotazioniButton;

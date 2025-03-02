@@ -3,6 +3,7 @@ package Controllers;
 import Commands.CommandConfermaVoti;
 import Commands.CommandGetEsiti;
 import Interfacce.IControllerBase;
+import Models.StateItem;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -21,16 +22,17 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
 
     private ControllerStudente controllerStudente;
 
-    @FXML private TableView   TableEsiti;
-    @FXML private TableColumn ColonnaNomeEsame;
-    @FXML private TableColumn ColonnaCFU;
-    @FXML private TableColumn ColonnaVoto;
-    @FXML private TableColumn ColonnaDocente;
-    @FXML private TableColumn ColonnaData;
-    @FXML private TableColumn ColonnaConferma;
-    @FXML private Label       labelVoto;
-    @FXML private RadioButton AccettaVotoRadioButton;
-    @FXML private RadioButton RifiutaVotoRadioButton;
+    @FXML public TableView<StateItem>           TableEsiti;
+    @FXML public TableColumn<StateItem, String> ColonnaNomeEsame;
+    @FXML public TableColumn<StateItem, String> ColonnaCFU;
+    @FXML public TableColumn<StateItem, String> ColonnaVoto;
+    @FXML public TableColumn<StateItem, String> ColonnaDocente;
+    @FXML public TableColumn<StateItem, String> ColonnaData;
+    @FXML public TableColumn<StateItem, Void>   ColonnaConferma;
+
+    @FXML public Label       labelVoto;
+    @FXML public RadioButton AccettaVotoRadioButton;
+    @FXML public RadioButton RifiutaVotoRadioButton;
 
     private ToggleGroup votoToggleGroup;
 
@@ -63,41 +65,12 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
 
 
     private void configuraColonne(){
-        ColonnaNomeEsame.setCellValueFactory(new PropertyValueFactory<>("nomeEsame"));
-        ColonnaCFU.setCellValueFactory(new PropertyValueFactory<>("CFU"));
-        ColonnaVoto.setCellValueFactory(new PropertyValueFactory<>("voto"));
-        ColonnaDocente.setCellValueFactory(new PropertyValueFactory<>("credenziali"));
-        ColonnaData.setCellValueFactory(new PropertyValueFactory<>("dataAppello"));
+        ColonnaNomeEsame.setCellValueFactory(cellData -> cellData.getValue().getCampo("nomeEsame"));
+        ColonnaCFU.setCellValueFactory(cellData -> cellData.getValue().getCampo("CFU"));
+        ColonnaVoto.setCellValueFactory(cellData -> cellData.getValue().getCampo("voto"));
+        ColonnaDocente.setCellValueFactory(cellData -> cellData.getValue().getCampo("credenziali"));
+        ColonnaData.setCellValueFactory(cellData -> cellData.getValue().getCampo("dataAppello"));
         ColonnaConferma.setCellFactory(param -> creaBottoneInserimentoVoto());
-    }
-
-
-    public class StateItem {
-
-        private String nomeEsame;
-        private String CFU;
-        private String voto;
-        private String credenziali;
-        private String dataAppello;
-        private String numeroAppello;
-
-        public StateItem(String nomeEsame, String CFU, String voto, String credenziali, String dataAppello, String numeroAppello) {
-            this.nomeEsame     = nomeEsame;
-            this.CFU           = CFU;
-            this.voto          = voto;
-            this.credenziali   = credenziali;
-            this.dataAppello   = dataAppello;
-            this.numeroAppello = numeroAppello;
-        }
-
-        public String getNomeEsame(){
-            return nomeEsame;
-        }
-        public String getVoto(){ return voto; }
-        public String getCFU(){ return CFU; }
-        public String getCredenziali(){ return credenziali; }
-        public String getDataAppello(){ return dataAppello; }
-        public String getNumeroAppello(){ return numeroAppello; }
     }
 
 
@@ -105,16 +78,17 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
         controllerStudente.studente.setCommand(new CommandGetEsiti(controllerStudente.connection, controllerStudente.studente.getMatricola()));
         List<Map<String, Object>> listaEsiti = (List<Map<String, Object>>) controllerStudente.studente.eseguiAzione();
 
-        ObservableList<ControllerStudenteEsitiForm.StateItem> listStateItems = FXCollections.observableArrayList();
+        ObservableList<StateItem> listStateItems = FXCollections.observableArrayList();
         for (Map<String, Object> esiti : listaEsiti) {
-            String nomeEsame     = (String) esiti.get("nome_esame");
-            String CFU           = (String) esiti.get("CFU");
-            String voto          = (String) esiti.get("voto");
-            String credenziali   = (String) esiti.get("credenziali_docente");
-            String dataAppello   = (String) esiti.get("data_appello");
-            String numeroAppello = (String) esiti.get("numero_appello");
+            StateItem item = new StateItem();
+            item.setCampo("nome_esame",          (String) esiti.get("nome_esame"));
+            item.setCampo("CFU",                 (String) esiti.get("CFU"));
+            item.setCampo("voto",                (String) esiti.get("voto"));
+            item.setCampo("credenziali_docente", (String) esiti.get("credenziali_docente"));
+            item.setCampo("data_appello",        (String) esiti.get("data_appello"));
+            item.setCampo("numero_appello",      (String) esiti.get("numero_appello"));
 
-            listStateItems.add(new ControllerStudenteEsitiForm.StateItem(nomeEsame, CFU, voto, credenziali, dataAppello, numeroAppello));
+            listStateItems.add(item);
         }
         return listStateItems;
     }
@@ -128,7 +102,7 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
     }
 
 
-    public TableCell<ControllerStudenteEsitiForm.StateItem, Void> creaBottoneInserimentoVoto(){
+    public TableCell<StateItem, Void> creaBottoneInserimentoVoto(){
         return new TableCell<>() {
             private final Button btn = new Button("Visualizza");
 
@@ -140,7 +114,7 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
                 } else {
                     setGraphic(btn);
                     btn.setOnAction(event -> {
-                        ControllerStudenteEsitiForm.StateItem selectedItem = getTableRow().getItem();
+                        StateItem selectedItem = getTableRow().getItem();
                         showInputAlert(selectedItem);
                     });
                 }
@@ -165,7 +139,7 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
             ControllerStudenteEsitiForm currentController = loader.getController();
             currentController.setController(this.controllerStudente);
 
-            currentController.setDati(selectedItem.voto);
+            currentController.setDati((String) selectedItem.getCampo("voto").get());
             currentController.setToggle();
 
             Alert alert = showAlertPage(content);
@@ -193,7 +167,7 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
 
 
     private void confermaVoto(StateItem item, String scelta) throws SQLException {
-        String numeroAppello = item.getNumeroAppello();
+        String numeroAppello = (String) item.getCampo("numero_appello").get();
         String matricola     = controllerStudente.studente.getMatricola();
 
         controllerStudente.studente.setCommand(new CommandConfermaVoti(controllerStudente.connection, scelta, matricola, numeroAppello));

@@ -3,12 +3,11 @@ package Controllers;
 import Commands.CommandGetAppelliPerStudente;
 import Commands.CommandPrenotaEsame;
 import Interfacce.IControllerBase;
+import Models.StateItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
@@ -16,18 +15,13 @@ import java.util.Map;
 public class ControllerStudentePrenotazione implements IControllerBase<ControllerStudente> {
     private ControllerStudente controllerStudente;
 
-    @FXML public TableView   tablePrenotazione;
-    @FXML public TableColumn colonnaDocente;
-    @FXML public TableColumn colonnaData;
-    @FXML public TableColumn colonnaNomeEsame;
-    @FXML public TableColumn colonnaPrenotazione;
-    @FXML public TableColumn colonnaNumeroAppello;
-    @FXML public TableColumn colonnaDisponibile;
-
-
-    public void initialize(){
-
-    }
+    @FXML public TableView<StateItem>           tablePrenotazione;
+    @FXML public TableColumn<StateItem, String> colonnaDocente;
+    @FXML public TableColumn<StateItem, String> colonnaData;
+    @FXML public TableColumn<StateItem, String> colonnaNomeEsame;
+    @FXML public TableColumn<StateItem, String> colonnaNumeroAppello;
+    @FXML public TableColumn<StateItem, String> colonnaDisponibile;
+    @FXML public TableColumn<StateItem, Void>   colonnaPrenotazione;  // Per il bottone
 
     @Override
     public void setController(ControllerStudente controllerStudente) throws SQLException {
@@ -35,15 +29,13 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         prenotaAppello();
     }
 
-
     private void configuraColonne() {
-        colonnaDocente.setCellValueFactory(new PropertyValueFactory<>("credenzialiDocente"));
-        colonnaData.setCellValueFactory(new PropertyValueFactory<>("dataAppello"));
-        colonnaNomeEsame.setCellValueFactory(new PropertyValueFactory<>("nomeEsame"));
-        colonnaNumeroAppello.setCellValueFactory(new PropertyValueFactory<>("numeroAppello"));
-        colonnaDisponibile.setCellValueFactory(new PropertyValueFactory<>("disponibile"));
+        colonnaDocente.setCellValueFactory(cellData -> cellData.getValue().getCampo("credenzialiDocente"));
+        colonnaData.setCellValueFactory(cellData -> cellData.getValue().getCampo("dataAppello"));
+        colonnaNomeEsame.setCellValueFactory(cellData -> cellData.getValue().getCampo("nomeEsame"));
+        colonnaNumeroAppello.setCellValueFactory(cellData -> cellData.getValue().getCampo("numeroAppello"));
+        colonnaDisponibile.setCellValueFactory(cellData -> cellData.getValue().getCampo("disponibile"));
     }
-
 
     private List<StateItem> recuperaAppelli() throws SQLException {
         controllerStudente.studente.setCommand(new CommandGetAppelliPerStudente(controllerStudente.connection, controllerStudente.studente.getNomePiano()));
@@ -52,64 +44,28 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         ObservableList<StateItem> listaStateItems = FXCollections.observableArrayList();
 
         for (Map<String, Object> appello : listaAppelli) {
-            String credenzialiDocente = (String) appello.get("credenziali_docente");
-            String dataAppello        = (String) appello.get("data_appello");
-            String nomeEsame          = (String) appello.get("nome_esame");
-            String numeroAppello      = (String) appello.get("numero_appello");
-            String disponibile        = (Boolean) appello.get("disponibile") ? "Aperto" : "Chiuso";
+            StateItem item = new StateItem();
+            item.setCampo("matricola", controllerStudente.studente.getMatricola());
+            item.setCampo("credenzialiDocente", (String) appello.get("credenziali_docente"));
+            item.setCampo("dataAppello", (String) appello.get("data_appello"));
+            item.setCampo("nomeEsame", (String) appello.get("nome_esame"));
+            item.setCampo("numeroAppello", (String) appello.get("numero_appello"));
+            item.setCampo("disponibile", ((Boolean) appello.get("disponibile")) ? "Aperto" : "Chiuso");
 
-            listaStateItems.add(new StateItem(controllerStudente.studente.getMatricola(), credenzialiDocente, dataAppello, nomeEsame, numeroAppello, disponibile));
-
+            listaStateItems.add(item);
         }
 
         return listaStateItems;
     }
 
+    private void eseguiPrenotazione(StateItem item) {
+        String matricola = item.getValore("matricola");
+        String numeroAppello = item.getValore("numeroAppello");
 
-    public class StateItem {
-
-        private String credenzialiDocente;
-        private String dataAppello;
-        private String nomeEsame;
-        private String numeroAppello;
-        private String matricola;
-        private String disponibile;
-
-        public StateItem(String matricola, String credenzialiDocente, String dataAppello, String nomeEsame, String numeroAppello, String disponibile) {
-            this.credenzialiDocente = credenzialiDocente;
-            this.dataAppello        = dataAppello;
-            this.nomeEsame          = nomeEsame;
-            this.numeroAppello      = numeroAppello;
-            this.matricola          = matricola;
-            this.disponibile        = disponibile;
-        }
-
-        public String getCredenzialiDocente(){
-            return credenzialiDocente;
-        }
-        public String getDataAppello(){
-            return dataAppello;
-        }
-        public String getNomeEsame(){
-            return nomeEsame;
-        }
-        public String getNumeroAppello(){
-            return numeroAppello;
-        }
-        public String getMatricola() { return matricola; }
-        public String getDisponibile() { return disponibile; }
-
-    }
-
-
-    private void eseguiPrenotazione(StateItem selectedItem){
-        String matricola     = selectedItem.getMatricola();
-        String numeroAppello = selectedItem.getNumeroAppello();
-
-        Alert alert = ControllerAlert.mostraConferma("Quest azione è irreversibile", "Conferma Prenotazione", "Sei sicuro di voler confermare la prenotazione?");
+        Alert alert = ControllerAlert.mostraConferma("Quest'azione è irreversibile", "Conferma Prenotazione", "Sei sicuro di voler confermare la prenotazione?");
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                controllerStudente.studente.setCommand(new CommandPrenotaEsame(controllerStudente.connection, numeroAppello ,matricola));
+                controllerStudente.studente.setCommand(new CommandPrenotaEsame(controllerStudente.connection, numeroAppello, matricola));
                 try {
                     controllerStudente.studente.eseguiAzione();
                 } catch (SQLException e) {
@@ -119,24 +75,21 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         });
     }
 
-
-    public TableCell<StateItem, Void> creaBottonePrenotazione(){
-
+    public TableCell<StateItem, Void> creaBottonePrenotazione() {
         return new TableCell<>() {
             private final Button btn = new Button("Prenota");
 
             @Override
-            protected void updateItem(java.lang.Void item, boolean empty) {
+            protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    StateItem rowData = getTableRow().getItem(); // Recupera l'elemento della riga
-                    if (rowData != null && "Chiuso".equals(rowData.getDisponibile())) {
-                        setGraphic(null);  // Nascondi il bottone se l'appello è chiuso
+                    StateItem rowData = getTableRow().getItem();
+                    if (rowData != null && "Chiuso".equals(rowData.getValore("disponibile"))) {
+                        setGraphic(null);
                     } else {
-                        setGraphic(btn);  // Mostra il bottone se l'appello è aperto
-
+                        setGraphic(btn);
                         btn.setOnAction(event -> {
                             eseguiPrenotazione(rowData);
                             try {
@@ -150,7 +103,6 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
             }
         };
     }
-
 
     public void prenotaAppello() throws SQLException {
         configuraColonne();

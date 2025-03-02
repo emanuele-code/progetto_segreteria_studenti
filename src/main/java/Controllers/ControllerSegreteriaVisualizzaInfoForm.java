@@ -20,6 +20,8 @@ import java.util.List;
 
 
 public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<ControllerSegreteria> {
+    private ControllerSegreteria controllerSegreteria;
+    private ObservableList<IStudente> studentiObservableList;
 
     @FXML private TableView   tableRicerca;
     @FXML private TableColumn ColonnaNome;
@@ -40,8 +42,6 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
     @FXML private TextField   cercaMatricola;
 
 
-    private ControllerSegreteria controllerSegreteria;
-    private ObservableList<IStudente> studentiObservableList;
 
 
     public void setController(ControllerSegreteria controllerSegreteria) throws SQLException {

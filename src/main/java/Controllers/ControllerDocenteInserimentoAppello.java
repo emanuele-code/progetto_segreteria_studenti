@@ -4,6 +4,7 @@ import Commands.CommandChiudiPrenotazione;
 import Commands.CommandGetAppelliPerDocente;
 import Commands.CommandInserisciAppello;
 import Interfacce.IControllerBase;
+import Models.StateItem;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -16,23 +17,23 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 public class ControllerDocenteInserimentoAppello implements IControllerBase<ControllerDocente> {
     private ControllerDocente controllerDocente;
 
-    @FXML private TableView   TabellaAppelli;
-    @FXML private TableColumn ColonnaDataAppello;
-    @FXML private TableColumn ColonnaEsame;
-    @FXML private TableColumn ColonnaNumeroIscritti;
-    @FXML private TableColumn ColonnaDisponibile;
-    @FXML private TableColumn ColonnaDocente;
-    @FXML private TableColumn ColonnaChiudiAppello;
-    @FXML private TableColumn ColonnaNumeroAppello;
+    @FXML private TableView<StateItem>           TabellaAppelli;
+    @FXML private TableColumn<StateItem, String> ColonnaDataAppello;
+    @FXML private TableColumn<StateItem, String> ColonnaEsame;
+    @FXML private TableColumn<StateItem, String> ColonnaNumeroIscritti;
+    @FXML private TableColumn<StateItem, String> ColonnaDisponibile;
+    @FXML private TableColumn<StateItem, String> ColonnaDocente;
+    @FXML private TableColumn<StateItem, String> ColonnaNumeroAppello;
+    @FXML private TableColumn<StateItem, Void>   ColonnaChiudiAppello;
 
     @FXML private DatePicker       DataAppelloButton;
     @FXML private ComboBox<String> ScegliEsameLista;
+
 
     @FXML
     public void showInputAlert() {
@@ -75,6 +76,7 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
     @Override
     public void setController(ControllerDocente controllerDocente) throws SQLException {
         this.controllerDocente = controllerDocente;
+        valorizzaTabellaAppelli();
     }
 
     public void valorizzaTabellaAppelli() throws SQLException {
@@ -98,78 +100,47 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
         ObservableList<StateItem> listStateItems = FXCollections.observableArrayList();
 
         for (Map<String, Object> appello : listaAppelli) {
-            String dataAppello        = (String) appello.get("data_appello");
-            String nomeEsame          = (String) appello.get("nome_esame");
-            String disponibile        = (String) appello.get("disponibile");
-            String numeroIscritti     = (String) appello.get("numero_iscritti");
-            String credenzialiDocente = (String)  appello.get("credenziali_docente");
-            String numeroAppello      = (String)  appello.get("numero_appello");
+            StateItem item = new StateItem();
 
-            listStateItems.add(new ControllerDocenteInserimentoAppello.StateItem(dataAppello, nomeEsame, numeroIscritti, disponibile, credenzialiDocente, numeroAppello));
+            item.setCampo("data_appello"        , (String) appello.get("data_appello"));
+            item.setCampo("nome_esame"          , (String) appello.get("nome_esame"));
+            item.setCampo("disponibile"         , (String) appello.get("disponibile"));
+            item.setCampo("numero_iscritti"     , (String) appello.get("numero_iscritti"));
+            item.setCampo("credenziali_docente" , (String)  appello.get("credenziali_docente"));
+            item.setCampo("numero_appello"      , (String)  appello.get("numero_appello"));
+
+            listStateItems.add(item);
         }
         return listStateItems;
 
     }
 
     private void configuraColonne(){
-        ColonnaDataAppello.setCellValueFactory(new PropertyValueFactory<>("DataAppello"));
-        ColonnaNumeroAppello.setCellValueFactory(new PropertyValueFactory<>("numeroAppello"));
-        ColonnaEsame.setCellValueFactory(new PropertyValueFactory<>("nomeEsame"));
-        ColonnaNumeroIscritti.setCellValueFactory(new PropertyValueFactory<>("numeroIscritti"));
-        ColonnaDisponibile.setCellValueFactory(new PropertyValueFactory<>("disponibile"));
-        ColonnaDocente.setCellValueFactory(new PropertyValueFactory<>("credenzialiDocente"));
+        ColonnaDataAppello.setCellValueFactory(cellData -> cellData.getValue().getCampo("data_appello"));
+        ColonnaNumeroAppello.setCellValueFactory(cellData -> cellData.getValue().getCampo("numero_appello"));
+        ColonnaEsame.setCellValueFactory(cellData -> cellData.getValue().getCampo("nome_esame"));
+        ColonnaNumeroIscritti.setCellValueFactory(cellData -> cellData.getValue().getCampo("numero_iscritti"));
+        ColonnaDisponibile.setCellValueFactory(cellData -> cellData.getValue().getCampo("disponibile"));
+        ColonnaDocente.setCellValueFactory(cellData -> cellData.getValue().getCampo("credenziali_docente"));
         ColonnaChiudiAppello.setCellFactory(param -> creaBottoneConferma());
     }
 
-    public class StateItem {
 
-        private String dataAppello;
-        private String nomeEsame;
-        private String numeroIscritti;
-        private String disponibile;
-        private String credenzialiDocente;
-        private String numeroAppello;
-
-        public StateItem(String dataAppello, String nomeEsame, String numeroIscritti, String disponibile, String credenzialiDocente, String numeroAppello) {
-            this.dataAppello = dataAppello;
-            this.nomeEsame = nomeEsame;
-            this.numeroIscritti = numeroIscritti;
-            this.disponibile = disponibile;
-            this.credenzialiDocente = credenzialiDocente;
-            this.numeroAppello = numeroAppello;
-        }
-
-        public String getDataAppello(){
-            return dataAppello;
-        }
-        public String getNomeEsame(){
-            return nomeEsame;
-        }
-        public String getNumeroIscritti(){
-            return numeroIscritti;
-        }
-        public String getDisponibile(){
-            return Objects.equals(disponibile, "1") ? "Aperto" : "Chiuso";
-        }
-        public String getCredenzialiDocente(){ return credenzialiDocente; }
-        public String getNumeroAppello(){ return numeroAppello; }
-    }
-
-    public TableCell<ControllerDocenteInserimentoAppello.StateItem, Void> creaBottoneConferma(){
+    public TableCell<StateItem, Void> creaBottoneConferma(){
         return new TableCell<>() {
             private final Button btn = new Button("Chiudi");
 
             @Override
-            protected void updateItem(java.lang.Void item, boolean empty) {
-                super.updateItem(item, empty);
+            protected void updateItem(java.lang.Void selectedItem, boolean empty) {
+                super.updateItem(selectedItem, empty);
                 if (empty) {
                     setGraphic(null);
                 } else {
                     setGraphic(btn);  // Mostriamo il bottone
 
                     btn.setOnAction(event -> {
-                        ControllerDocenteInserimentoAppello.StateItem selectedItem = getTableRow().getItem();
-                        chiudiAppello(selectedItem);
+                        StateItem item = getTableRow().getItem();
+                        chiudiAppello(item);
                     });
                 }
             }
@@ -178,7 +149,7 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
 
     @FXML
     private void chiudiAppello(StateItem item){
-        String numeroAppello = item.getNumeroAppello();
+        String numeroAppello = item.getValore("numero_appello");
 
         Alert alert = ControllerAlert.mostraConferma("Quest azione è irreversibile", "Conferma Inserimento", "Sei sicuro di voler confermare l'inserimento?");
         alert.showAndWait().ifPresent(response -> {
