@@ -1,5 +1,6 @@
-package Controllers;
+package Utils;
 
+import Controllers.*;
 import Interfacce.IControllerBase;
 import Interfacce.ICambioScena;
 import javafx.event.ActionEvent;
@@ -10,12 +11,14 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.util.Pair;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class ControllerGestoreScena extends ControllerDB {
+public class UtilGestoreScena {
 
 
     private static Map<Button, String> getSceneMapSegreteria(ControllerSegreteria controller) {
@@ -84,7 +87,7 @@ public class ControllerGestoreScena extends ControllerDB {
 
     public static void caricaSubView(AnchorPane contenitore, String percorsoFXML, ICambioScena controller) {
         try {
-            FXMLLoader loader = new FXMLLoader(ControllerGestoreScena.class.getResource(percorsoFXML));
+            FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(percorsoFXML));
             Parent nuovaVista = loader.load();
 
             IControllerBase<ICambioScena> subController = loader.getController();
@@ -103,11 +106,12 @@ public class ControllerGestoreScena extends ControllerDB {
 
     public static void cambiaScena(ActionEvent actionEvent, String percorsoFXML) {
         try {
-            FXMLLoader loader = new FXMLLoader(ControllerGestoreScena.class.getResource(percorsoFXML));
+            FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(percorsoFXML));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) actionEvent.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
+
             stage.show();
         } catch (IOException e) {
             System.err.println("Errore durante il cambio scena: " + e.getMessage());
@@ -116,16 +120,29 @@ public class ControllerGestoreScena extends ControllerDB {
     }
 
 
+    public static <T> Pair<Parent, T> caricaFXML(String percorsoFXML) {
+        try {
+            FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(percorsoFXML));
+            Parent content = loader.load();
+            T controller = loader.getController();
+            return new Pair<>(content, controller); // Restituisce la vista e il controller
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null; // Oppure lanciare un'eccezione personalizzata
+        }
+    }
+
+
     public static void handleExit(ActionEvent event, Connection connection) {
         String fxmlFile = "/loginPage.fxml";
 
         try {
-            FXMLLoader loader = new FXMLLoader(ControllerGestoreScena.class.getResource(fxmlFile));
+            FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(fxmlFile));
             Parent root = loader.load();
 
             Object controller = loader.getController();
-            if (controller instanceof LoginController) {
-                ((LoginController) controller).setConnection(connection);
+            if (controller instanceof ControllerLogin) {
+                ((ControllerLogin) controller).setConnection(connection);
             }
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -135,4 +152,6 @@ public class ControllerGestoreScena extends ControllerDB {
             e.printStackTrace();
         }
     }
+
+
 }

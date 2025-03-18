@@ -1,11 +1,14 @@
 package Dao;
 
 import Interfacce.IDocenteDAO;
+import Utils.UtilAlert;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class DAODocente implements IDocenteDAO {
@@ -52,6 +55,14 @@ public class DAODocente implements IDocenteDAO {
     }
 
     public void inserisciAppello(String dataAppello, String codiceEsame, String cf) throws SQLException {
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dataFormattata = LocalDate.parse(dataAppello, formatter);
+
+        if(dataFormattata.isAfter(LocalDate.now().minusDays(7))){
+            UtilAlert.mostraErrore("L'appello va inserito almeno 7 giorni prima la data d'esame", "Errore Data Appello", "Non è consentito inserire un appello in questa data");
+        }
+
         String query = " SELECT COUNT(*) FROM DOCENTE D" +
                                     " JOIN INSEGNA I ON I.cf = d.cf" +
                                     " JOIN ESAME E ON E.codice_esame = i.codice_esame" +
@@ -59,13 +70,8 @@ public class DAODocente implements IDocenteDAO {
         try (PreparedStatement verificaStatement = connection.prepareStatement(query)) {
             verificaStatement.setString(1, cf);
             verificaStatement.setString(2, codiceEsame);
-
-            try (ResultSet resultSet = verificaStatement.executeQuery()) {
-                if (resultSet.next() && resultSet.getInt(1) == 0) {
-                    throw new SQLException("Il professore con codice fiscale " + cf + " non insegna l'esame con codice " + codiceEsame);
-                }
-            }
         }
+
         query = "INSERT INTO APPELLO (data_appello, codice_esame, cf) VALUES (?,?,?)";
         try(PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, dataAppello);
@@ -123,7 +129,7 @@ public class DAODocente implements IDocenteDAO {
                 "    SELECT numero_appello, COUNT(*) AS numero_iscritti FROM PRENOTAZIONE " +
                 "    GROUP BY numero_appello " +
                 ") P ON A.numero_appello = P.numero_appello " +
-                " WHERE A.cf = ? ";
+                " WHERE A.cf = ? AND A.data_appello <= date('now')";
 
 
 

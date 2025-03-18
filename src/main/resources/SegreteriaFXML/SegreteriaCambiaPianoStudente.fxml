@@ -2,7 +2,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerSegreteriaCambioPiano" layoutX="-1.0" layoutY="-1.0" prefHeight="448.0" prefWidth="577.0">
+<AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerSegreteriaCambioPiano" layoutX="-1.0" layoutY="-1.0" prefHeight="400.0" prefWidth="600.0">
     <children>
         <Button    fx:id="ConfermaCambioPianoStudenteButton" layoutX="143.0" layoutY="257.0" prefHeight="30.0" prefWidth="305.0" text="Conferma" mnemonicParsing="false" onAction="#cambiaPianoStudi"/>
         <ComboBox  fx:id="CambiaPianoStudiDropDown"          layoutX="144.0" layoutY="177.0" prefHeight="27.0" prefWidth="304.0" promptText="Piano studi" />

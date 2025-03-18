@@ -20,7 +20,7 @@
                   </AnchorPane>
                </left>
                <top>
-                  <AnchorPane prefHeight="52.0" prefWidth="780.0" style="-fx-background-color: blue;" BorderPane.alignment="CENTER" />
+                  <AnchorPane prefHeight="52.0" prefWidth="780.0" style="-fx-background-color: #1A5D63;" BorderPane.alignment="CENTER" />
                </top>
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">

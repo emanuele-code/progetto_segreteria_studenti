@@ -1,13 +1,11 @@
-package Controllers;
+package Utils;
 
-import javafx.collections.FXCollections;
 import javafx.scene.control.*;
 import javafx.beans.property.ReadOnlyObjectWrapper;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
-public class ControllerGestoreTableView {
+public class UtilGestoreTableView {
 
     public static <T> void configuraColonne(TableView<T> tableView, Map<String, Function<T, ?>> colonneMappa) {
         tableView.getColumns().clear();
@@ -21,12 +19,7 @@ public class ControllerGestoreTableView {
         });
     }
 
-    public static <T> void aggiornaDati(TableView<T> tableView, List<T> items) {
-        tableView.setItems(FXCollections.observableArrayList(items));
-    }
-
-    public static <T> void aggiungiColonnaBottone( TableView<T> tableView, String colonnaNome, Function<T, String> buttonTextProvider, Function<T, Runnable> actionProvider) {
-
+    public static <T> void aggiungiColonnaBottone(TableView<T> tableView, String colonnaNome, Function<T, Boolean> crea, Function<T, String> buttonTextProvider, Function<T, Runnable> actionProvider) {
         TableColumn<T, Void> colButton = new TableColumn<>(colonnaNome);
 
         colButton.setCellFactory(param -> new TableCell<>() {
@@ -40,9 +33,14 @@ public class ControllerGestoreTableView {
                 } else {
                     T rowData = getTableRow().getItem();
                     if (rowData != null) {
-                        btn.setText(buttonTextProvider.apply(rowData));  // Testo dinamico
-                        btn.setOnAction(event -> actionProvider.apply(rowData).run());
-                        setGraphic(btn);
+                        // Usa `crea.apply(rowData)` per ottenere il valore booleano
+                        if (crea.apply(rowData)) {
+                            btn.setText(buttonTextProvider.apply(rowData));  // Testo dinamico
+                            btn.setOnAction(event -> actionProvider.apply(rowData).run());
+                            setGraphic(btn);
+                        } else {
+                            setGraphic(null);
+                        }
                     } else {
                         setGraphic(null);
                     }

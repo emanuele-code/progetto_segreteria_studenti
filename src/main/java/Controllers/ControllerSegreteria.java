@@ -1,10 +1,10 @@
 package Controllers;
 
-
 import Commands.CommandGetPianiStudio;
 import Interfacce.ICambioScena;
-import Interfacce.ISegreteria;
+import Interfacce.ISetCommand;
 import Models.UtenteFactory;
+import Utils.UtilGestoreScena;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.Button;
@@ -13,8 +13,8 @@ import java.util.Map;
 import java.sql.SQLException;
 
 
-public class ControllerSegreteria extends ControllerDB implements ICambioScena {
-    protected ISegreteria segreteria = UtenteFactory.creaSegreteria(connection);
+public class ControllerSegreteria extends ControllerLogin implements ICambioScena {
+    protected ISetCommand segreteria = UtenteFactory.creaSegreteria();
     protected Map<Integer, String> mappa;
 
     @FXML public Button     cercaStudenteButton;
@@ -24,11 +24,11 @@ public class ControllerSegreteria extends ControllerDB implements ICambioScena {
     @FXML public AnchorPane contenitoreSubView;
 
     @FXML public void switchForm(javafx.event.ActionEvent actionEvent) {
-        ControllerGestoreScena.switchForm(actionEvent, this);
+        UtilGestoreScena.switchForm(actionEvent, this);
     }
 
     @FXML public void handleExit(javafx.event.ActionEvent event) {
-        ControllerGestoreScena.handleExit(event, connection);
+        UtilGestoreScena.handleExit(event, connection);
     }
 
     protected String convertiNomeToCodicePiano(ComboBox<String> comboBox){

@@ -2,8 +2,10 @@ package Controllers;
 
 import Commands.CommandGetEsamiInsegnati;
 import Interfacce.ICambioScena;
-import Interfacce.IDocente;
+import Interfacce.IGetterDocente;
+import Interfacce.ISetCommand;
 import Models.UtenteFactory;
+import Utils.UtilGestoreScena;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -11,8 +13,8 @@ import javafx.scene.layout.AnchorPane;
 import java.sql.SQLException;
 import java.util.Map;
 
-public class ControllerDocente extends ControllerDB implements ICambioScena {
-    protected IDocente docente;
+public class ControllerDocente extends ControllerLogin implements ICambioScena {
+    protected ISetCommand docente;
     protected Map<String, String> mappa;
 
     @FXML public AnchorPane contenitoreSubView;
@@ -20,12 +22,12 @@ public class ControllerDocente extends ControllerDB implements ICambioScena {
     @FXML public Button inserisciVotoButton;
 
 
-    @FXML public void switchForm(javafx.event.ActionEvent actionEvent) throws SQLException {
-        ControllerGestoreScena.switchForm(actionEvent, this);
+    @FXML public void switchForm(javafx.event.ActionEvent actionEvent) {
+        UtilGestoreScena.switchForm(actionEvent, this);
     }
 
     @FXML public void handleExit(javafx.event.ActionEvent event) {
-        ControllerGestoreScena.handleExit(event, connection);
+        UtilGestoreScena.handleExit(event, connection);
     }
 
     protected String convertiNomeToCodicePiano(ComboBox<String> comboBox){
@@ -42,7 +44,7 @@ public class ControllerDocente extends ControllerDB implements ICambioScena {
     }
 
     protected Map<String, String> caricaEsami(ComboBox<String> comboBox) throws SQLException {
-        docente.setCommand(new CommandGetEsamiInsegnati(connection, docente.getCf()));
+        docente.setCommand(new CommandGetEsamiInsegnati(connection, ((IGetterDocente)docente).getCf()));
         mappa = (Map<String, String>)docente.eseguiAzione();
 
 

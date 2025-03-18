@@ -53,7 +53,7 @@ public class DAOStudente implements IStudenteDAO {
         return listaEsiti;
     }
 
-
+    /*
     public List<Map<String, Object>> getAppelliDisponibili(String nomePiano) throws SQLException {
         String query = " SELECT A.data_appello, E.nome_esame, D.nome_docente, A.numero_appello FROM PIANO_STUDI PS " +
                        " JOIN PREVEDE PR ON PR.codice_piano = PS.codice_piano" +
@@ -87,6 +87,7 @@ public class DAOStudente implements IStudenteDAO {
         }
         return listaAppelliDisponibili;
     }
+    */
 
 
     public static List<Map<String, Object>> getDatiEsami(String matricola, String codicePiano, Connection connection) throws SQLException {
@@ -188,22 +189,24 @@ public class DAOStudente implements IStudenteDAO {
     }
 
 
-    public List<Map<String, Object>> getAppelli(String nomePiano) throws SQLException {
-
-        String selectQuery = "SELECT A.disponibile, D.nome_docente, D.cognome_docente, A.numero_appello, E.nome_esame, A.data_appello FROM APPELLO A " +
-                " JOIN DOCENTE D ON D.cf = A.cf" +
-                " JOIN ESAME E ON E.codice_esame = A.codice_esame" +
-                " JOIN PREVEDE P ON P.codice_esame = E.codice_esame" +
-                " JOIN PIANO_STUDI PI ON PI.codice_piano = P.codice_piano" +
-                " WHERE PI.nome_piano = ?";
-
-
+    public List<Map<String, Object>> getAppelli(String nomePiano, String matricola) throws SQLException {
+        String selectQuery = "SELECT A.disponibile, D.nome_docente, D.cognome_docente, A.numero_appello, E.nome_esame, A.data_appello, " +
+                "CASE WHEN PRT.matricola IS NOT NULL THEN TRUE ELSE FALSE END AS prenotato " +
+                "FROM APPELLO A " +
+                "JOIN DOCENTE D ON D.cf = A.cf " +
+                "JOIN ESAME E ON E.codice_esame = A.codice_esame " +
+                "JOIN PREVEDE P ON P.codice_esame = E.codice_esame " +
+                "JOIN PIANO_STUDI PI ON PI.codice_piano = P.codice_piano " +
+                "LEFT JOIN PRENOTAZIONE PRT ON PRT.numero_appello = A.numero_appello AND PRT.matricola = ? " + // Controllo se lo studente ha prenotato
+                "WHERE PI.nome_piano = ? AND A.data_appello <= date('now')";
 
         List<Map<String, Object>> listaAppelli = new ArrayList<>();
 
         try (PreparedStatement statement = connection.prepareStatement(selectQuery)) {
-            statement.setString(1, nomePiano);
-            try (ResultSet rs = statement.executeQuery()){
+            statement.setString(1, matricola); // Parametro per la prenotazione
+            statement.setString(2, nomePiano); // Parametro per il piano di studi
+
+            try (ResultSet rs = statement.executeQuery()) {
                 while (rs.next()) {
                     String nomeDocente = rs.getString("nome_docente");
                     String cognomeDocente = rs.getString("cognome_docente");
@@ -211,27 +214,29 @@ public class DAOStudente implements IStudenteDAO {
                     String nomeEsame = rs.getString("nome_esame");
                     String dataAppello = rs.getString("data_appello");
                     Boolean disponibile = rs.getBoolean("disponibile");
+                    Boolean isPrenotato = rs.getBoolean("prenotato"); // Stato prenotazione
 
+                    Map<String, Object> datiAppello = new HashMap<>();
+                    datiAppello.put("data_appello", dataAppello);
+                    datiAppello.put("nome_esame", nomeEsame);
+                    datiAppello.put("numero_appello", numeroAppello);
+                    datiAppello.put("credenziali_docente", nomeDocente + " " + cognomeDocente);
+                    datiAppello.put("disponibile", disponibile);
+                    datiAppello.put("prenotato", isPrenotato); // Aggiunto campo prenotazione
 
-                    Map<String, Object> datiStudente = new HashMap<>();
-                    datiStudente.put("data_appello", dataAppello);
-                    datiStudente.put("nome_esame", nomeEsame);
-                    datiStudente.put("numero_appello", numeroAppello);
-                    datiStudente.put("credenziali_docente", nomeDocente + " " + cognomeDocente);
-                    datiStudente.put("disponibile", disponibile);
-
-                    listaAppelli.add(datiStudente);
+                    listaAppelli.add(datiAppello);
                 }
             }
         }
-
 
         return listaAppelli;
     }
 
 
     public List<Map<String, Object>> getLibretto(String matricola) throws SQLException {
-        String query = "SELECT E.codice_esame, E.nome_esame, E.CFU, COALESCE(P.voto, 'Non sostenuto') as voto, A.data_appello, P.stato FROM PIANO_STUDI PS " +
+        String query = "SELECT E.codice_esame, E.nome_esame, E.CFU, A.data_appello, P.stato," +
+                " COALESCE( CASE WHEN P.stato = 'confermato' THEN P.voto ELSE 'Non sostenuto' END, 'Non sostenuto' ) AS voto " +
+                " FROM PIANO_STUDI PS " +
                 " JOIN PREVEDE PR ON PS.codice_piano = PR.codice_piano " +
                 " JOIN ESAME E ON PR.codice_esame = E.codice_esame " +
                 " LEFT JOIN APPELLO A ON E.codice_esame = A.codice_esame " +
@@ -274,14 +279,14 @@ public class DAOStudente implements IStudenteDAO {
     }
 
 
-    public void ConfermaVoti(String scelta, String matricola, String numeroAppello) throws SQLException {
+    public void confermaVoti(String scelta, String matricola, String numeroAppello) throws SQLException {
         String insertPrenotazioneQuery = "UPDATE PRENOTAZIONE SET stato = ?" +
                 " WHERE matricola = ? AND numero_appello = ?";
 
         try (PreparedStatement insertPrenotazioneStmt = connection.prepareStatement(insertPrenotazioneQuery)) {
             insertPrenotazioneStmt.setString(1, scelta);
-            insertPrenotazioneStmt.setString(3, matricola);
-            insertPrenotazioneStmt.setString(2, numeroAppello);
+            insertPrenotazioneStmt.setString(2, matricola);
+            insertPrenotazioneStmt.setString(3, numeroAppello);
 
             insertPrenotazioneStmt.executeUpdate();
         }
@@ -301,38 +306,16 @@ public class DAOStudente implements IStudenteDAO {
     }
 
 
-    public Map<String, Object> consultaPiano(String matricola) throws SQLException {
-        String query = "SELECT * FROM STUDENTE S " +
-                " JOIN PIANO_STUDI PN ON PN.codice_piano = S.codice_piano " +
-                " JOIN PREVEDE P ON PN.codice_piano = P.codice_piano " +
-                " JOIN ESAME E ON E.codice_esame = P.codice_esame" +
-                " WHERE matricola = ?";
+    public void eliminaPrenotazione(String numeroAppello, String matricola) throws SQLException {
+        String deletePrenotazioneQuery = "DELETE FROM PRENOTAZIONE WHERE matricola = ? AND numero_appello = ?";
 
-        Map<String, Object> datiStudente = new HashMap<>();
+        try (PreparedStatement deletePrenotazioneStmt = connection.prepareStatement(deletePrenotazioneQuery)) {
+            deletePrenotazioneStmt.setString(1, matricola);
+            deletePrenotazioneStmt.setString(2, numeroAppello);
 
-        try(PreparedStatement statement = connection.prepareStatement(query)){
-            statement.setString(1, matricola);
-
-            try (ResultSet rs = statement.executeQuery()) {
-                if (rs.next()) {
-                    String codicePiano = rs.getString("codice_piano");
-                    String cfuTotali = rs.getString("cfu_totali");
-                    String nomePiano = rs.getString("nome_piano");
-                    String residenza = rs.getString("residenza");
-                    boolean tassePagate = "pagate".equals(rs.getString("stato_tasse"));
-                    String pianoStudi = rs.getString("nome_piano");
-
-                    List<Map<String, Object>> datiEsami = getDatiEsami(matricola, codicePiano, connection);
-
-                    datiStudente.put("dati_esami", datiEsami);
-                    datiStudente.put("codice_piano", codicePiano);
-                    datiStudente.put("cfu_totali", cfuTotali);
-                    datiStudente.put("nome_piano", nomePiano);
-                    datiStudente.put("residenza", residenza);
-                    datiStudente.put("tasse_pagate", tassePagate ? "Sì" : "No");
-                }
-                return datiStudente;
-            }
+            deletePrenotazioneStmt.executeUpdate();
         }
     }
+
+
 }

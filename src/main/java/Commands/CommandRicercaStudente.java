@@ -1,13 +1,13 @@
 package Commands;
 import Interfacce.ICommand;
 import Interfacce.IRicercaStudenteStrategy;
-import Interfacce.IStudente;
+import Interfacce.ISetCommand;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
-public class CommandRicercaStudente implements ICommand<List<IStudente>> {
+public class CommandRicercaStudente implements ICommand<List<ISetCommand>> {
 
     private IRicercaStudenteStrategy strategy;
     private Connection connection;
@@ -18,7 +18,7 @@ public class CommandRicercaStudente implements ICommand<List<IStudente>> {
     }
 
     @Override
-    public List<IStudente> execute() throws SQLException {
+    public List<ISetCommand> execute() throws SQLException {
         return strategy.ricercaStudente(connection);
     }
 }

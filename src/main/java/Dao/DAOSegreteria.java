@@ -1,7 +1,7 @@
 package Dao;
 
 import Interfacce.ISegreteriaDAO;
-import Utils.Hash;
+import Utils.UtilHash;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,9 +12,11 @@ import java.util.*;
 public class DAOSegreteria implements ISegreteriaDAO {
     private final Connection connection;
 
+
     public DAOSegreteria(Connection connection){
         this.connection = connection;
     }
+
 
     public void inserisciStudente(String[] dati)  throws SQLException {
         String query = "INSERT INTO STUDENTE (nome_studente, cognome_studente, data_nascita, residenza, stato_tasse, codice_piano, password) VALUES\n" +
@@ -26,11 +28,12 @@ public class DAOSegreteria implements ISegreteriaDAO {
             statement.setString(4, dati[3]);
             statement.setString(5, "non pagate");
             statement.setString(6, dati[4]);
-            statement.setString(7, Hash.hashPassword(dati[5]));
+            statement.setString(7, UtilHash.hashPassword(dati[5]));
 
             statement.executeUpdate();
         }
     }
+
 
     public void cambiaPianoStudente(String matricola, String codiceCorso) throws SQLException {
         String query = "UPDATE STUDENTE SET CODICE_PIANO = ? WHERE MATRICOLA = ?";
@@ -46,6 +49,7 @@ public class DAOSegreteria implements ISegreteriaDAO {
             }
         }
     }
+
 
     public void confermaVoto(String matricola, String numeroAppello) throws SQLException {
         String query = " UPDATE PRENOTAZIONE " +
@@ -79,9 +83,10 @@ public class DAOSegreteria implements ISegreteriaDAO {
 
 
     public List<Map<String, Object>> getVotiDaConfermare() throws SQLException {
-        String selectQuery = "SELECT A.cf, data_appello, P.matricola, A.numero_appello, P.voto, nome_esame, cfu FROM STUDENTE S " +
+        String selectQuery = "SELECT D.nome_docente, D.cognome_docente, data_appello, P.matricola, A.numero_appello, P.voto, nome_esame, cfu FROM STUDENTE S " +
                 " JOIN PRENOTAZIONE P ON P.matricola = S.matricola " +
                 " JOIN APPELLO A ON A.numero_appello = P.numero_appello " +
+                " JOIN DOCENTE D ON D.cf = A.cf " +
                 " JOIN ESAME E ON E.codice_esame = A.codice_esame " +
                 " WHERE stato = 'accettato'";
 
@@ -91,21 +96,22 @@ public class DAOSegreteria implements ISegreteriaDAO {
              ResultSet rs = selectStatement.executeQuery()) {
 
             while (rs.next()) {
-                String dataAppello = rs.getString("data_appello");
-                String matricola = rs.getString("matricola");
-                String numeroAppello = rs.getString("numero_appello");
-                String voto = rs.getString("voto");
-                String cfDocente = rs.getString("cf");
-                String nomeEsame = rs.getString("nome_esame");
-                String cfu = rs.getString("cfu");
-
+                String dataAppello    = rs.getString("data_appello");
+                String matricola      = rs.getString("matricola");
+                String numeroAppello  = rs.getString("numero_appello");
+                String voto           = rs.getString("voto");
+                String nomeDocente    = rs.getString("nome_docente");
+                String cognomeDocente = rs.getString("cognome_docente");
+                String nomeEsame      = rs.getString("nome_esame");
+                String cfu            = rs.getString("cfu");
 
                 Map<String, Object> datiStudente = new HashMap<>();
+
                 datiStudente.put("data_appello", dataAppello);
                 datiStudente.put("matricola", matricola);
                 datiStudente.put("numero_appello", numeroAppello);
                 datiStudente.put("voto", voto);
-                datiStudente.put("cf_docente", cfDocente);
+                datiStudente.put("credenziali_docente", nomeDocente + " " + cognomeDocente);
                 datiStudente.put("nome_esame", nomeEsame);
                 datiStudente.put("cfu", cfu);
 

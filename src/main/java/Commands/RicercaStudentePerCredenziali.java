@@ -1,6 +1,6 @@
 package Commands;
 import Interfacce.IRicercaStudenteStrategy;
-import Interfacce.IStudente;
+import Interfacce.ISetCommand;
 import Models.UtenteFactory;
 
 import java.sql.Connection;
@@ -16,7 +16,7 @@ public class RicercaStudentePerCredenziali implements IRicercaStudenteStrategy {
         this.cognome = cognome;
     }
 
-    public List<IStudente> ricercaStudente(Connection connection) throws SQLException {
+    public List<ISetCommand> ricercaStudente(Connection connection) throws SQLException {
         return UtenteFactory.creaStudenteDaCredenziali(nome, cognome, connection);
     }
 }

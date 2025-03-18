@@ -4,14 +4,8 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerDocenteInserisciVoti" prefHeight="400.0" prefWidth="600.0">
     <children>
-        <TableView fx:id="TableInserisciVoti" prefHeight="449.0" prefWidth="574.0">
+        <TableView fx:id="TableInserisciVoti" prefHeight="449.0" prefWidth="588.0">
             <columns>
-                <TableColumn fx:id="ColonnaNumeroAppello" prefWidth="131.0" text="ID Appello" />
-                <TableColumn fx:id="ColonnaDataAppello" prefWidth="131.0" text="Data appello" />
-                <TableColumn fx:id="ColonnaMatricola" prefWidth="131.0" text="Matricola" />
-                <TableColumn fx:id="ColonnaEsame" prefWidth="139.0" text="Esame" />
-                <TableColumn fx:id="ColonnaVoto" prefWidth="137.0" text="Voto" />
-                <TableColumn fx:id="ColonnaInserisciVoto" prefWidth="163.0" text="Inserisci" />
             </columns>
         </TableView>
     </children>

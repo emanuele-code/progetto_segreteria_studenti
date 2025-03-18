@@ -5,6 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 public interface IRicercaStudenteStrategy {
-    public List<IStudente> ricercaStudente(Connection connection) throws SQLException;
+    List<ISetCommand> ricercaStudente(Connection connection) throws SQLException;
 
 }

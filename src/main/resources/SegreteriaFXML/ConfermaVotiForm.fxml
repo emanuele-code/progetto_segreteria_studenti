@@ -8,17 +8,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerSegreteriaConfermaVoti" prefHeight="400.0" prefWidth="600.0">
     <children>
-        <TableView fx:id="tableConferme" layoutY="1.0" prefHeight="445.0" prefWidth="577.0">
-            <columns>
-                <TableColumn fx:id="ColonnaConfermaMatricola"     prefWidth="65.0"  text="Matricola" />
-                <TableColumn fx:id="ColonnaConfermaCodiceAppello" prefWidth="101.0" text="Codice Appello" />
-                <TableColumn fx:id="ColonnaConfermaDocente"       prefWidth="73.0"  text="Docente" />
-                <TableColumn fx:id="ColonnaConfermaDataAppello"   prefWidth="93.0"  text="Data Appello" />
-                <TableColumn fx:id="ColonnaConfermaNomeEsame"     prefWidth="88.0"  text="Nome Esame" />
-                <TableColumn fx:id="ColonnaConfermaCFU"           prefWidth="38.0"  text="CFU" />
-                <TableColumn fx:id="ColonnaConfermaVoto"          prefWidth="41.0"  text="Voto" />
-                <TableColumn fx:id="ColonnaConferma"              prefWidth="41.0"  text="Conferma" />
-            </columns>
+        <TableView fx:id="tableConferme" layoutY="1.0" prefHeight="445.0" prefWidth="588.0">
         </TableView>
     </children>
 </AnchorPane>

@@ -5,10 +5,11 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import Interfacce.IStudente;
+import Interfacce.IGetterStudente;
+import Interfacce.ISetCommand;
 import Interfacce.ICommand;
 
-public class Studente<T> implements IStudente<T> {
+public class Studente<T> implements ISetCommand<T>, IGetterStudente {
     private String nome;
     private String cognome;
     private String matricola;
@@ -19,7 +20,6 @@ public class Studente<T> implements IStudente<T> {
     private List<String> nomeEsami;
     private List<Integer> votiEsami;
     private List<Integer> cfuEsami;
-
     private ICommand<T> command;
 
 

@@ -1,7 +1,7 @@
 import java.io.IOException;
 import java.sql.Connection;
 
-import Controllers.LoginController;
+import Controllers.ControllerLogin;
 import Utils.DatabaseSegreteria;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -17,11 +17,12 @@ public class SegreteriaStudenti extends Application {
             Connection connection = DatabaseSegreteria.getConnection();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("loginPage.fxml"));
             Parent root = loader.load();
-            LoginController controller = loader.getController();
+            ControllerLogin controller = loader.getController();
             controller.setConnection(connection);
 
             primaryStage.setTitle("Gestione Segreteria");
             primaryStage.setScene(new Scene(root));
+            primaryStage.setResizable(false); // Impedisce il ridimensionamento della finestra
             primaryStage.show();
         } catch(IOException e) {
              e.printStackTrace();

@@ -8,6 +8,4 @@ public abstract class ControllerDB {
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
-
-
 }

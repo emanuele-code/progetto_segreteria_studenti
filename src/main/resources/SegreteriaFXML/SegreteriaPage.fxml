@@ -12,16 +12,16 @@
                <left>
                   <AnchorPane prefHeight="200.0" prefWidth="206.0" style="-fx-background-color: lightgray;" BorderPane.alignment="CENTER">
                      <children>
-                        <Button id="VisualizzaInformazioniButton" fx:id="cercaStudenteButton" layoutX="1.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Visualizza Informazioni" />
-                        <Button id="ConfermaVotiButton" fx:id="confermaVotiButton" layoutX="1.0" layoutY="35.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Conferma Voti" />
-                        <Button id="InserisciStudenteButton" fx:id="inserisciStudenteButton" layoutX="1.0" layoutY="70.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Inserisci Studente" />
-                        <Button id="CambiaPianoStudenteButton" fx:id="cambiaPianoButton" layoutX="1.0" layoutY="105.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Cambia Piano Studente" />
-                        <Button id="EsciButton" fx:id="EsciButton" layoutX="1.0" layoutY="411.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="35.0" prefWidth="205.0" text="ESCI" />
+                        <Button id="VisualizzaInformazioniButton" fx:id="cercaStudenteButton"     layoutX="1.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Visualizza Informazioni" />
+                        <Button id="ConfermaVotiButton"           fx:id="confermaVotiButton"      layoutX="1.0" layoutY="35.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Conferma Voti" />
+                        <Button id="InserisciStudenteButton"      fx:id="inserisciStudenteButton" layoutX="1.0" layoutY="70.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Inserisci Studente" />
+                        <Button id="CambiaPianoStudenteButton"    fx:id="cambiaPianoButton"       layoutX="1.0" layoutY="105.0" mnemonicParsing="false" onAction="#switchForm" prefHeight="35.0" prefWidth="205.0" text="Cambia Piano Studente" />
+                        <Button id="EsciButton"                   fx:id="EsciButton"              layoutX="1.0" layoutY="411.0" mnemonicParsing="false" onAction="#handleExit" prefHeight="35.0" prefWidth="205.0" text="ESCI" />
                      </children>
                   </AnchorPane>
                </left>
                <top>
-                  <AnchorPane prefHeight="52.0" prefWidth="780.0" style="-fx-background-color: blue;" BorderPane.alignment="CENTER" />
+                  <AnchorPane prefHeight="52.0" prefWidth="780.0" style="-fx-background-color: #1A5D63;" BorderPane.alignment="CENTER" />
                </top>
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">

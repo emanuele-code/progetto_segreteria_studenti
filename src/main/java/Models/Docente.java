@@ -1,28 +1,27 @@
 package Models;
 
 import Interfacce.ICommand;
-import Interfacce.IDocente;
+import Interfacce.IGetterDocente;
+import Interfacce.ISetCommand;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
-public class Docente<T> implements IDocente<T> {
+public class Docente<T> implements ISetCommand<T>, IGetterDocente {
     private String cf;
     private String nome;
     private String cognome;
     private String email;
-    private Connection connection;
     private ICommand<T> command;
 
 
-    public Docente(String cf, String nome, String cognome, String email, Connection connection) {
+    public Docente(String cf, String nome, String cognome, String email) {
         this.cf = cf;
         this.nome = nome;
         this.cognome = cognome;
         this.email = email;
-        this.connection = connection;
     }
 
+    @Override
     public String getCf(){ return this.cf; }
     public String getNome(){ return this.nome; }
     public String getCognome(){ return this.cognome; }

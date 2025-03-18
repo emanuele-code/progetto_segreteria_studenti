@@ -1,9 +1,14 @@
 package Controllers;
 
+import Commands.CommandEliminaPrenotazione;
 import Commands.CommandGetAppelliPerStudente;
 import Commands.CommandPrenotaEsame;
 import Interfacce.IControllerBase;
+import Interfacce.IGetterStudente;
 import Models.StateItem;
+import Utils.UtilGestoreTableView;
+import Utils.UtilAlert;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,46 +16,74 @@ import javafx.scene.control.*;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 public class ControllerStudentePrenotazione implements IControllerBase<ControllerStudente> {
     private ControllerStudente controllerStudente;
 
     @FXML public TableView<StateItem>           tablePrenotazione;
-    @FXML public TableColumn<StateItem, String> colonnaDocente;
-    @FXML public TableColumn<StateItem, String> colonnaData;
-    @FXML public TableColumn<StateItem, String> colonnaNomeEsame;
-    @FXML public TableColumn<StateItem, String> colonnaNumeroAppello;
-    @FXML public TableColumn<StateItem, String> colonnaDisponibile;
-    @FXML public TableColumn<StateItem, Void>   colonnaPrenotazione;  // Per il bottone
+
 
     @Override
     public void setController(ControllerStudente controllerStudente) throws SQLException {
         this.controllerStudente = controllerStudente;
-        prenotaAppello();
     }
 
-    private void configuraColonne() {
-        colonnaDocente.setCellValueFactory(cellData -> cellData.getValue().getCampo("credenzialiDocente"));
-        colonnaData.setCellValueFactory(cellData -> cellData.getValue().getCampo("dataAppello"));
-        colonnaNomeEsame.setCellValueFactory(cellData -> cellData.getValue().getCampo("nomeEsame"));
-        colonnaNumeroAppello.setCellValueFactory(cellData -> cellData.getValue().getCampo("numeroAppello"));
-        colonnaDisponibile.setCellValueFactory(cellData -> cellData.getValue().getCampo("disponibile"));
+
+    @FXML
+    public void initialize() {
+        Platform.runLater(() -> {
+            try {
+                Map<String, Function<StateItem, ?>> colonneMappa = Map.of(
+                        "Docente", item -> item.getCampo("credenzialiDocente").get(),
+                        "Data Appello", item -> item.getCampo("dataAppello").get(),
+                        "Esame", item -> item.getCampo("nomeEsame").get(),
+                        "Disponibilità", item -> item.getCampo("disponibile").get(),
+                        "Prenotato", item -> item.getCampo("prenota").get()
+                );
+                UtilGestoreTableView.configuraColonne(tablePrenotazione, colonneMappa);
+
+                UtilGestoreTableView.aggiungiColonnaBottone(tablePrenotazione,
+                        "Stato",
+                        item -> item.getCampo("disponibile").get().equals("Aperto"),
+                        item -> item.getCampo("prenota").get().equals("Prenotato") ? "Annulla" : "Prenota",
+                        item -> item.getCampo("prenota").get().equals("Prenotato")
+                                ? () -> eliminaPrenotazione(item)
+                                : () -> eseguiPrenotazione(item)
+                );
+
+                ObservableList<StateItem> listaStateItem = FXCollections.observableArrayList(recuperaAppelli());
+                tablePrenotazione.setItems(listaStateItem);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
+
 
     private List<StateItem> recuperaAppelli() throws SQLException {
-        controllerStudente.studente.setCommand(new CommandGetAppelliPerStudente(controllerStudente.connection, controllerStudente.studente.getNomePiano()));
+        String nomePiano = ((IGetterStudente) controllerStudente.studente).getNomePiano();
+        String matricola = ((IGetterStudente) controllerStudente.studente).getMatricola();
+
+        controllerStudente.studente.setCommand(new CommandGetAppelliPerStudente(controllerStudente.connection, nomePiano, matricola));
         List<Map<String, Object>> listaAppelli = (List<Map<String, Object>>) controllerStudente.studente.eseguiAzione();
 
         ObservableList<StateItem> listaStateItems = FXCollections.observableArrayList();
 
         for (Map<String, Object> appello : listaAppelli) {
             StateItem item = new StateItem();
-            item.setCampo("matricola", controllerStudente.studente.getMatricola());
-            item.setCampo("credenzialiDocente", (String) appello.get("credenziali_docente"));
-            item.setCampo("dataAppello", (String) appello.get("data_appello"));
-            item.setCampo("nomeEsame", (String) appello.get("nome_esame"));
-            item.setCampo("numeroAppello", (String) appello.get("numero_appello"));
+            item.setCampo("matricola", matricola);
+            item.setCampo("credenzialiDocente", appello.get("credenziali_docente"));
+            item.setCampo("dataAppello", appello.get("data_appello"));
+            item.setCampo("nomeEsame", appello.get("nome_esame"));
+            item.setCampo("numeroAppello", appello.get("numero_appello"));
             item.setCampo("disponibile", ((Boolean) appello.get("disponibile")) ? "Aperto" : "Chiuso");
+
+            // Controllo se lo studente è prenotato
+            boolean isPrenotato = (Boolean) appello.get("prenotato");
+
+            // Imposto la colonna "prenota"
+            item.setCampo("prenota", isPrenotato ? "Prenotato" : "Prenota");
 
             listaStateItems.add(item);
         }
@@ -58,16 +91,19 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         return listaStateItems;
     }
 
+
     private void eseguiPrenotazione(StateItem item) {
         String matricola = item.getValore("matricola");
         String numeroAppello = item.getValore("numeroAppello");
 
-        Alert alert = ControllerAlert.mostraConferma("Quest'azione è irreversibile", "Conferma Prenotazione", "Sei sicuro di voler confermare la prenotazione?");
+        Alert alert = UtilAlert.mostraConferma("Quest'azione è irreversibile", "Conferma Prenotazione", "Sei sicuro di voler confermare la prenotazione?");
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 controllerStudente.studente.setCommand(new CommandPrenotaEsame(controllerStudente.connection, numeroAppello, matricola));
                 try {
                     controllerStudente.studente.eseguiAzione();
+                    ObservableList<StateItem> listaStateItem = FXCollections.observableArrayList(recuperaAppelli());
+                    tablePrenotazione.setItems(listaStateItem);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -75,39 +111,25 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         });
     }
 
-    public TableCell<StateItem, Void> creaBottonePrenotazione() {
-        return new TableCell<>() {
-            private final Button btn = new Button("Prenota");
 
-            @Override
-            protected void updateItem(Void item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    StateItem rowData = getTableRow().getItem();
-                    if (rowData != null && "Chiuso".equals(rowData.getValore("disponibile"))) {
-                        setGraphic(null);
-                    } else {
-                        setGraphic(btn);
-                        btn.setOnAction(event -> {
-                            eseguiPrenotazione(rowData);
-                            try {
-                                prenotaAppello();
-                            } catch (SQLException e) {
-                                throw new RuntimeException(e);
-                            }
-                        });
-                    }
+    private void eliminaPrenotazione(StateItem item) {
+        String matricola = item.getValore("matricola");
+        String numeroAppello = item.getValore("numeroAppello");
+
+
+        Alert alert = UtilAlert.mostraConferma("Quest'azione è irreversibile", "Elimina Prenotazione", "Sei sicuro di voler eliminare la prenotazione?");
+        alert.showAndWait().ifPresent(response -> {
+            if (response == ButtonType.OK) {
+                controllerStudente.studente.setCommand(new CommandEliminaPrenotazione(controllerStudente.connection, matricola, numeroAppello));
+                try {
+                    controllerStudente.studente.eseguiAzione();
+                    ObservableList<StateItem> listaStateItem = FXCollections.observableArrayList(recuperaAppelli());
+                    tablePrenotazione.setItems(listaStateItem);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
-        };
+        });
     }
 
-    public void prenotaAppello() throws SQLException {
-        configuraColonne();
-        ObservableList<StateItem> listaStateItem = FXCollections.observableArrayList(recuperaAppelli());
-        colonnaPrenotazione.setCellFactory(param -> creaBottonePrenotazione());
-        tablePrenotazione.setItems(listaStateItem);
-    }
 }

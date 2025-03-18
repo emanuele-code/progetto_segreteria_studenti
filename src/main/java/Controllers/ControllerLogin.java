@@ -1,6 +1,8 @@
 package Controllers;
 
-import Utils.Autenticazione;
+import Utils.UtilAlert;
+import Utils.UtilAutenticazione;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -14,31 +16,37 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class LoginController {
-    private Connection connection;
-    private Autenticazione autenticazione;
+public class ControllerLogin extends ControllerDB {
+    private UtilAutenticazione autenticazione;
     private String ruolo;
     private String credenziale;
     private String password;
 
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-        this.autenticazione = new Autenticazione(connection);
+    @FXML public TextField CredenzialiSegreteria;
+    @FXML public TextField PasswordSegreteria;
+    @FXML public TextField CredenzialiDocente;
+    @FXML public TextField PasswordDocente;
+    @FXML public TextField CredenzialiStudente;
+    @FXML public TextField PasswordStudente;
+    @FXML public TabPane   tabPane;
+
+
+    @FXML
+    public void initialize(){
+        Platform.runLater(() -> {
+            try {
+                this.autenticazione = new UtilAutenticazione(connection);
+            } catch(Exception e){
+                throw new RuntimeException(e);
+            }
+        });
     }
 
-    @FXML private TextField CredenzialiSegreteria;
 
-    @FXML private TextField PasswordSegreteria;
-
-    @FXML private TextField CredenzialiDocente;
-
-    @FXML private TextField PasswordDocente;
-
-    @FXML private TextField CredenzialiStudente;
-
-    @FXML private TextField PasswordStudente;
-
-    @FXML private TabPane tabPane;
+    @Override
+    public void setConnection(Connection connection) {
+        this.connection = connection;
+    }
 
     @FXML private void handleLogin() {
         String tabId = getTabSelezionato();
@@ -62,6 +70,8 @@ public class LoginController {
 
         if(autenticazione.login(ruolo, credenziale, password)){
             apriProssimaPagina();
+        } else {
+            UtilAlert.mostraErrore("Le credenziali sono errate", "Inserisci Credenziali corrette", "Credenziali errate");
         }
     }
 
@@ -82,7 +92,6 @@ public class LoginController {
         }
         caricaProssimaPagina(fxmlFile);
     }
-
 
     private void caricaProssimaPagina(String fxmlFile){
         try {

@@ -11,7 +11,7 @@ public class DatabaseSegreteria {
 
     private DatabaseSegreteria() {}
 
-    public static Connection getConnection() throws SQLException, ClassNotFoundException {
+    public static Connection getConnection() throws SQLException {
         if (connection == null) {
             synchronized (DatabaseSegreteria.class) {
                 if (connection == null) {

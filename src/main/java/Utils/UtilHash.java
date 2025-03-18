@@ -3,7 +3,7 @@ package Utils;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class Hash {
+public class UtilHash {
 
     public static String hashPassword(String password) {
         try {

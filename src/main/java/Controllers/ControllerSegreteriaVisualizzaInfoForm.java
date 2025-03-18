@@ -4,8 +4,9 @@ import Commands.CommandRicercaStudente;
 import Commands.RicercaStudentePerCredenziali;
 import Commands.RicercaStudentePerMatricola;
 import Interfacce.IControllerBase;
+import Interfacce.IGetterStudente;
 import Interfacce.IRicercaStudenteStrategy;
-import Interfacce.IStudente;
+import Utils.UtilAlert;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -18,30 +19,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-
 public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<ControllerSegreteria> {
     private ControllerSegreteria controllerSegreteria;
-    private ObservableList<IStudente> studentiObservableList;
-
-    @FXML private TableView   tableRicerca;
-    @FXML private TableColumn ColonnaNome;
-    @FXML private TableColumn ColonnaCognome;
-    @FXML private TableColumn ColonnaNomeEsame;
-    @FXML private TableColumn ColonnaVoto;
-    @FXML private TableColumn ColonnaCFU;
-    @FXML private TableColumn ColonnaTasse;
-    @FXML private TableColumn ColonnaResidenza;
-    @FXML private TableColumn ColonnaDataNascita;
-    @FXML private TableColumn ColonnaNomePiano;
-
-    @FXML private AnchorPane  visualizzaModalitaRicerca;
-    @FXML private RadioButton RadioMatricola;
-    @FXML private RadioButton RadioCredenziali;
-    @FXML private TextField   cercaPerCognome;
-    @FXML private TextField   cercaPerNome;
-    @FXML private TextField   cercaMatricola;
+    private ObservableList<IGetterStudente> studentiObservableList;
 
 
+    @FXML public TableView<IGetterStudente>           tableRicerca;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaNome;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaCognome;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaNomeEsame;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaVoto;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaCFU;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaTasse;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaResidenza;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaDataNascita;
+    @FXML public TableColumn<IGetterStudente, String> ColonnaNomePiano;
+
+    @FXML public AnchorPane  visualizzaModalitaRicerca;
+    @FXML public RadioButton RadioMatricola;
+    @FXML public RadioButton RadioCredenziali;
+    @FXML public TextField   cercaPerCognome;
+    @FXML public TextField   cercaPerNome;
+    @FXML public TextField   cercaMatricola;
 
 
     public void setController(ControllerSegreteria controllerSegreteria) throws SQLException {
@@ -58,7 +57,7 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
 
         group.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
             if (newToggle == RadioMatricola) {
-                mostraCampoMatricola();  // Mostra il campo "matricola"
+                mostraCampoMatricola();    // Mostra il campo "matricola"
             } else if (newToggle == RadioCredenziali) {
                 mostraCampoCredenziali();  // Mostra i campi "nome" e "cognome"
             }
@@ -72,8 +71,9 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
 
     }
 
+
     @FXML public void cercaStudente() throws SQLException {
-        List<IStudente> listaStudenti = new ArrayList<>();
+        List<IGetterStudente> listaStudenti = new ArrayList<>();
 
         if (RadioMatricola.isSelected()) {
             listaStudenti = cercaPerMatricola();
@@ -88,33 +88,36 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
         visualizzaModalitaRicerca.setVisible(false);
     }
 
-    private List<IStudente> cercaPerCredenziali() throws SQLException {
+
+    private List<IGetterStudente> cercaPerCredenziali() throws SQLException {
         String nome = cercaPerNome.getText().trim();
         String cognome = cercaPerCognome.getText().trim();
 
 
         if (nome.isEmpty() || cognome.isEmpty()) {
-            ControllerAlert.mostraErrore("Compila tutti i campi prima di inserire lo studente.", "Errore", "Campi mancanti o errati");
+            UtilAlert.mostraErrore("Compila tutti i campi prima di inserire lo studente.", "Errore", "Campi mancanti o errati");
             return new ArrayList<>();
         }
 
         IRicercaStudenteStrategy ricercaCredenziali = new RicercaStudentePerCredenziali(nome, cognome, controllerSegreteria.connection);
         controllerSegreteria.segreteria.setCommand(new CommandRicercaStudente(ricercaCredenziali, controllerSegreteria.connection));
-        return (List<IStudente>) controllerSegreteria.segreteria.eseguiAzione();
+        return (List<IGetterStudente>) controllerSegreteria.segreteria.eseguiAzione();
     }
 
-    private List<IStudente> cercaPerMatricola() throws SQLException {
+
+    private List<IGetterStudente> cercaPerMatricola() throws SQLException {
         String matricola = cercaMatricola.getText().trim();
 
         if (matricola.isEmpty()) {
-            ControllerAlert.mostraErrore("Inserisci sia il nome che il cognome.", "Errore", "Campi mancanti o errati");
+            UtilAlert.mostraErrore("Inserisci sia il nome che il cognome.", "Errore", "Campi mancanti o errati");
             return new ArrayList<>();
         }
 
         IRicercaStudenteStrategy ricercaMatricola = new RicercaStudentePerMatricola(matricola);
         controllerSegreteria.segreteria.setCommand(new CommandRicercaStudente(ricercaMatricola, controllerSegreteria.connection));
-        return (List<IStudente>) controllerSegreteria.segreteria.eseguiAzione();
+        return (List<IGetterStudente>) controllerSegreteria.segreteria.eseguiAzione();
     }
+
 
     private void mostraCampoMatricola() {
         // Rende visibile solo il campo "matricola" e nasconde gli altri
@@ -123,6 +126,7 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
         cercaPerNome.setVisible(false);
     }
 
+
     private void mostraCampoCredenziali() {
         // Rende visibili i campi "nome" e "cognome" e nasconde l'altro
         cercaMatricola.setVisible(false);
@@ -130,7 +134,10 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
         cercaPerNome.setVisible(true);
     }
 
+
     private void configuraColonne() {
+        // Configura le colonne della TableView per visualizzare i dati corretti
+
         ColonnaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         ColonnaCognome.setCellValueFactory(new PropertyValueFactory<>("cognome"));
         ColonnaTasse.setCellValueFactory(new PropertyValueFactory<>("tassePagate"));
@@ -143,5 +150,7 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
 
         tableRicerca.setItems(studentiObservableList);
     }
+
+
 
 }

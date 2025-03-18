@@ -1,8 +1,9 @@
-package Controllers;
+package Utils;
 
+import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 
-public class ControllerAlert {
+public class UtilAlert {
 
 
     public static Alert mostraConferma(String messaggio, String titolo, String testoHeader){
@@ -32,5 +33,15 @@ public class ControllerAlert {
         alert.showAndWait();
         return alert;
     }
+
+
+    public static Alert mostraPagina(String titolo, String header, Parent content){
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(titolo);
+        alert.setHeaderText(header);
+        alert.getDialogPane().setContent(content); // Imposta il contenuto FXML
+        return alert;
+    }
+
 
 }

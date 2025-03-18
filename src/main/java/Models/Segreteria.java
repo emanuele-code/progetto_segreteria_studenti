@@ -1,24 +1,17 @@
 package Models;
 
 import Interfacce.ICommand;
-import Interfacce.ISegreteria;
+import Interfacce.ISetCommand;
 
-import java.sql.Connection;
 import java.sql.SQLException;
 
 
-public class Segreteria<T> implements ISegreteria<T> {
-    private final Connection connection;
+public class Segreteria<T> implements ISetCommand<T> {
     private ICommand<T> command;
-
-    Segreteria(Connection connection){
-        this.connection = connection;
-    }
 
     public void setCommand(ICommand command){
         this.command = command;
     }
-
     public T eseguiAzione() throws SQLException {
         return command.execute();
     }

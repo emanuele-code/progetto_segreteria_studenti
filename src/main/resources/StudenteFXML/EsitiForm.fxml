@@ -5,15 +5,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.ControllerStudenteEsitiForm" prefHeight="400.0" prefWidth="600.0">
     <children>
-        <TableView fx:id="TableEsiti" prefHeight="452.0" prefWidth="575.0">
-            <columns>
-                <TableColumn fx:id="ColonnaNomeEsame" prefWidth="111.0" text="Nome esame" />
-                <TableColumn fx:id="ColonnaCFU" prefWidth="104.0" text="CFU" />
-                <TableColumn fx:id="ColonnaVoto" prefWidth="104.0" text="Voto" />
-                <TableColumn fx:id="ColonnaDocente" prefWidth="104.0" text="Docente" />
-                <TableColumn fx:id="ColonnaData" prefWidth="104.0" text="Data" />
-                <TableColumn fx:id="ColonnaConferma" prefWidth="104.0" text="Conferma" />
-            </columns>
+        <TableView fx:id="TableEsiti" prefHeight="452.0" prefWidth="588.0">
         </TableView>
     </children>
 </AnchorPane>
