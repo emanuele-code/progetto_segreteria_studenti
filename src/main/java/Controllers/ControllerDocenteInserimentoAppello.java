@@ -18,6 +18,9 @@ import javafx.scene.control.*;
 import javafx.util.Pair;
 
 import java.sql.SQLException;
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -88,14 +91,42 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
         }
     }
 
+    private boolean isDataValida(String dataStr) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate dataSelezionata;
+
+        try {
+            dataSelezionata = LocalDate.parse(dataStr, formatter);
+        } catch (Exception e) {
+            System.out.println("Formato data non valido: " + dataStr);
+            return false;
+        }
+
+        LocalDate oggi = LocalDate.now();
+        boolean almenoSetteGiorniDopo = dataSelezionata.isAfter(oggi.plusDays(6));
+
+        DayOfWeek giorno = dataSelezionata.getDayOfWeek();
+        boolean nonEWeekend = !(giorno == DayOfWeek.SATURDAY || giorno == DayOfWeek.SUNDAY);
+
+        return almenoSetteGiorniDopo && nonEWeekend;
+    }
+
 
     private void eseguiOperazione(ControllerDocenteInserimentoAppello currentController) throws SQLException {
         String data = currentController.getDatiSelezionati();
+
+        if (!isDataValida(data)) {
+            UtilAlert.mostraErrore("La data per l'appello non può essere di sabato, domenica o meno di 7 giorni prima dalla data d'inserimento", "Errore inserimento appello", "Errore inserimento appello");
+            return;
+        }
+
         String esame = currentController.controllerDocente.convertiNomeToCodicePiano(currentController.ScegliEsameLista);
 
-        controllerDocente.docente.setCommand(new CommandInserisciAppello(controllerDocente.connection, data, esame, ((IGetterDocente)controllerDocente.docente).getCf()));
+        controllerDocente.docente.setCommand(new CommandInserisciAppello( controllerDocente.connection, data, esame, ((IGetterDocente)controllerDocente.docente).getCf()));
+
         controllerDocente.docente.eseguiAzione();
     }
+
 
 
     public String getDatiSelezionati() {
@@ -130,7 +161,7 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
     private void chiudiAppello(StateItem item){
         String numeroAppello = item.getValore("numero_appello");
 
-        Alert alert = UtilAlert.mostraConferma("Quest azione è irreversibile", "Conferma Inserimento", "Sei sicuro di voler confermare l'inserimento?");
+        Alert alert = UtilAlert.mostraConferma("Quest azione è irreversibile", "Conferma chiusura appello", "Sei sicuro di voler chiudere le prenotazioni?");
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {

@@ -80,7 +80,7 @@ public class ControllerSegreteriaInserisciStudente implements IControllerBase<Co
 
         controllerSegreteria.segreteria.setCommand(new CommandInserisciStudente(controllerSegreteria.connection, dati));
         controllerSegreteria.segreteria.eseguiAzione();
-        UtilAlert.mostraInfo("Studente inserito con successo", "Inserimento studente confermato", "Lo studente è stato inseritoo",
+        UtilAlert.mostraInfo("Studente inserito con successo", "Inserimento studente confermato", "Lo studente è stato inserito",
                 "Nome: " + dati[0]  + "\n" + "Cognome: " + dati[1]  + "\n" + "Residenza: " + dati[3]  + "\n" + "Data Nascita: " + dati[2]  + "\n");
     }
 
