@@ -1,7 +1,8 @@
 package Controllers;
 
+import Interfacce.IAutenticazioneDAO;
+import Proxy.ProxyAutenticazione;
 import Utils.UtilAlert;
-import Utils.UtilAutenticazione;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -17,7 +18,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class ControllerLogin extends ControllerDB {
-    private UtilAutenticazione autenticazione;
+    //private UtilAutenticazione autenticazione;
+    private IAutenticazioneDAO autenticazione;
     private String ruolo;
     private String credenziale;
     private String password;
@@ -35,7 +37,8 @@ public class ControllerLogin extends ControllerDB {
     public void initialize(){
         Platform.runLater(() -> {
             try {
-                this.autenticazione = new UtilAutenticazione(connection);
+                this.autenticazione = new ProxyAutenticazione(connection);
+                //this.autenticazione = new UtilAutenticazione(connection);
             } catch(Exception e){
                 throw new RuntimeException(e);
             }
@@ -68,7 +71,7 @@ public class ControllerLogin extends ControllerDB {
                 break;
         }
 
-        if(autenticazione.login(ruolo, credenziale, password)){
+        if(autenticazione.isUtenteAutenticato(ruolo, credenziale, password)){
             apriProssimaPagina();
         } else {
             UtilAlert.mostraErrore("Le credenziali sono errate", "Inserisci Credenziali corrette", "Credenziali errate");
