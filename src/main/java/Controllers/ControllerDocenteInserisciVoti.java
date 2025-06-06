@@ -31,19 +31,25 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
     @FXML public Label labelEsame;
     @FXML public ComboBox<String> comboVoti;
 
-
+    /**
+     * Imposta il controller principale {@link ControllerDocente} per questa classe.
+     *
+     * @param controllerDocente il controller principale da associare
+     * @throws SQLException in caso di errori nel database
+     */
     @Override
     public void setController(ControllerDocente controllerDocente) throws SQLException {
         this.controllerDocente = controllerDocente;
     }
 
-
+    /**
+     * Inizializza la tabella dei voti e configura le colonne e i pulsanti.
+     * Recupera le prenotazioni e popola la tabella all'avvio del controller.
+     */
     @FXML
     public void initialize() {
-
         Platform.runLater(() -> {
             try {
-
                 Map<String, Function<StateItem, ?>> colonneMappa = Map.of(
                         "matricola", item -> item.getCampo("matricola").get(),
                         "esame", item -> item.getCampo("nome_esame").get(),
@@ -67,7 +73,9 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
         });
     }
 
-
+    /**
+     * Valorizza la combo box dei voti con le opzioni disponibili.
+     */
     private void valorizzaComboVoti(){
         ObservableList<String> voti = FXCollections.observableArrayList(
                 "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "30L", "Assente", "Non Ammesso"
@@ -75,7 +83,12 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
         comboVoti.setItems(voti);
     }
 
-
+    /**
+     * Recupera la lista di studenti prenotati per l'inserimento del voto.
+     *
+     * @return una lista di {@link StateItem} contenente le prenotazioni
+     * @throws SQLException in caso di errori nel database
+     */
     private List<StateItem> recuperaPrenotati() throws SQLException {
         controllerDocente.docente.setCommand(new CommandGetPrenotazioni(controllerDocente.connection, ((IGetterDocente)controllerDocente.docente).getCf()));
         List<Map<String, Object>> listaPrenotati = (List<Map<String, Object>>) controllerDocente.docente.eseguiAzione();
@@ -93,13 +106,23 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
         return listStateItems;
     }
 
-
+    /**
+     * Imposta i dati visibili nelle label dell'interfaccia con matricola ed esame selezionato.
+     *
+     * @param matricola la matricola dello studente
+     * @param esame     il nome dell'esame
+     */
     private void setDati(String matricola, String esame) {
         labelMatricola.setText(matricola);
         labelEsame.setText(esame);
     }
 
-
+    /**
+     * Esegue l'inserimento del voto per lo studente selezionato nell'appello specificato.
+     *
+     * @param item il {@link StateItem} contenente le informazioni sull'esame e lo studente
+     * @throws SQLException in caso di errori durante l'esecuzione del comando
+     */
     private void inserisciVoto(StateItem item) throws SQLException {
         String numeroAppello = (String) item.getCampo("numero_appello").get();
         String matricola = (String) item.getCampo("matricola").get();
@@ -109,7 +132,12 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
         controllerDocente.docente.eseguiAzione();
     }
 
-
+    /**
+     * Mostra una finestra modale per l'inserimento del voto di uno studente.
+     * Dopo la conferma, aggiorna il campo del voto e invia il comando di inserimento.
+     *
+     * @param item il {@link StateItem} che rappresenta la riga selezionata nella tabella
+     */
     public void mostraInputAlert(StateItem item) {
         String matricola = (String) item.getCampo("matricola").get();
         String nomeEsame = (String) item.getCampo("nome_esame").get();
@@ -138,5 +166,4 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
             e.printStackTrace();
         }
     }
-
 }

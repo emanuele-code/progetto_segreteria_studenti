@@ -18,9 +18,24 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Map;
 
+/**
+ * Classe di utilità per la gestione del cambio di scena e caricamento di viste (FXML) nelle applicazioni JavaFX
+ * del progetto Segreteria Studenti.
+ *
+ * Fornisce metodi statici per associare pulsanti a percorsi FXML, cambiare scena, caricare sotto-viste
+ * e gestire la chiusura della sessione tornando alla login page.
+ *
+ * @author Emanuele Pacilio
+ * @version 1.0
+ */
 public class UtilGestoreScena {
 
-
+    /**
+     * Restituisce la mappa associativa pulsanti - percorsi FXML per la segreteria.
+     *
+     * @param controller ControllerSegreteria che contiene i riferimenti ai pulsanti
+     * @return mappa con Button come chiavi e percorsi FXML come valori
+     */
     private static Map<Button, String> getSceneMapSegreteria(ControllerSegreteria controller) {
         return Map.of(
                 controller.cercaStudenteButton, "/SegreteriaFXML/SegreteriaVisualizzaInfoForm.fxml",
@@ -30,7 +45,12 @@ public class UtilGestoreScena {
         );
     }
 
-
+    /**
+     * Restituisce la mappa associativa pulsanti - percorsi FXML per il docente.
+     *
+     * @param controller ControllerDocente che contiene i riferimenti ai pulsanti
+     * @return mappa con Button come chiavi e percorsi FXML come valori
+     */
     private static Map<Button, String> getSceneMapDocente(ControllerDocente controller) {
         return Map.of(
                 controller.inserisciAppelloButton, "/DocenteFXML/DocenteInserimentoAppello.fxml",
@@ -38,7 +58,12 @@ public class UtilGestoreScena {
         );
     }
 
-
+    /**
+     * Restituisce la mappa associativa pulsanti - percorsi FXML per lo studente.
+     *
+     * @param controller ControllerStudente che contiene i riferimenti ai pulsanti
+     * @return mappa con Button come chiavi e percorsi FXML come valori
+     */
     private static Map<Button, String> getSceneMapStudente(ControllerStudente controller) {
         return Map.of(
                 controller.PrenotazioniButton, "/StudenteFXML/PrenotazioneForm.fxml",
@@ -47,7 +72,13 @@ public class UtilGestoreScena {
         );
     }
 
-
+    /**
+     * Cambia la scena o carica una sub-vista nel contenitore, se il percorso è valido.
+     *
+     * @param actionEvent evento generato dal click sul pulsante
+     * @param sceneMap mappa pulsanti-percorsi FXML
+     * @param controller controller che implementa ICambioScena
+     */
     private static void cambiaScenaSeValida(ActionEvent actionEvent, Map<Button, String> sceneMap, ICambioScena controller) {
         Button sourceButton = (Button) actionEvent.getSource();
         String percorsoFXML = sceneMap.get(sourceButton);
@@ -67,7 +98,12 @@ public class UtilGestoreScena {
         }
     }
 
-
+    /**
+     * Cambia la vista principale in base al controller e al pulsante premuto.
+     *
+     * @param actionEvent evento generato dall'utente
+     * @param controller controller della scena corrente che implementa ICambioScena
+     */
     public static void switchForm(ActionEvent actionEvent, ICambioScena controller) {
         Map<Button, String> sceneMap = null;
 
@@ -84,7 +120,13 @@ public class UtilGestoreScena {
         }
     }
 
-
+    /**
+     * Carica un sotto-view (FXML) all'interno di un AnchorPane contenitore.
+     *
+     * @param contenitore AnchorPane dove caricare la nuova vista
+     * @param percorsoFXML percorso relativo al file FXML da caricare
+     * @param controller controller principale da passare al sotto-controller
+     */
     public static void caricaSubView(AnchorPane contenitore, String percorsoFXML, ICambioScena controller) {
         try {
             FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(percorsoFXML));
@@ -103,7 +145,12 @@ public class UtilGestoreScena {
         }
     }
 
-
+    /**
+     * Cambia completamente la scena principale dell'applicazione.
+     *
+     * @param actionEvent evento che ha scatenato il cambio
+     * @param percorsoFXML percorso relativo del file FXML da caricare
+     */
     public static void cambiaScena(ActionEvent actionEvent, String percorsoFXML) {
         try {
             FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(percorsoFXML));
@@ -119,7 +166,13 @@ public class UtilGestoreScena {
         }
     }
 
-
+    /**
+     * Carica un file FXML e ne restituisce il contenuto e il controller associato.
+     *
+     * @param <T> tipo del controller associato al FXML
+     * @param percorsoFXML percorso relativo del file FXML da caricare
+     * @return una coppia contenente il nodo radice e il controller, oppure null in caso di errore
+     */
     public static <T> Pair<Parent, T> caricaFXML(String percorsoFXML) {
         try {
             FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(percorsoFXML));
@@ -132,7 +185,12 @@ public class UtilGestoreScena {
         }
     }
 
-
+    /**
+     * Gestisce l'evento di uscita, tornando alla pagina di login e mantenendo la connessione al database.
+     *
+     * @param event evento generato dall'azione di uscita
+     * @param connection connessione al database da passare al controller di login
+     */
     public static void handleExit(ActionEvent event, Connection connection) {
         String fxmlFile = "/loginPage.fxml";
 
@@ -152,6 +210,4 @@ public class UtilGestoreScena {
             e.printStackTrace();
         }
     }
-
-
 }

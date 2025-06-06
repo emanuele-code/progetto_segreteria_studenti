@@ -27,7 +27,9 @@ import java.util.Optional;
 import java.util.function.Function;
 
 import static Utils.UtilGestoreScena.caricaFXML;
-
+/**
+ * Controller per la gestione dell'inserimento e chiusura degli appelli da parte del docente.
+ */
 public class ControllerDocenteInserimentoAppello implements IControllerBase<ControllerDocente> {
     private ControllerDocente controllerDocente;
 
@@ -35,11 +37,14 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
     @FXML public DatePicker           DataAppelloButton;
     @FXML public ComboBox<String>     ScegliEsameLista;
 
-
+    /**
+     * Inizializza la tabella degli appelli con i dati correnti e configura le colonne.
+     */
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
             try {
+                // Configura colonne e popola la tabella con gli appelli
                 Map<String, Function<StateItem, ?>> colonneMappa = Map.of(
                         "data_appello", item -> item.getCampo("data_appello").get(),
                         "numero_appello", item -> item.getCampo("numero_appello").get(),
@@ -65,13 +70,20 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
         });
     }
 
-
+    /**
+     * Imposta il controller principale associato a questa vista.
+     *
+     * @param controllerDocente il controller principale del docente
+     * @throws SQLException in caso di errori di connessione al database
+     */
     @Override
     public void setController(ControllerDocente controllerDocente) throws SQLException {
         this.controllerDocente = controllerDocente;
     }
 
-
+    /**
+     * Mostra un alert per inserire un nuovo appello e gestisce la conferma dell'utente.
+     */
     @FXML
     public void mostraInputAlert() {
         try {
@@ -91,27 +103,29 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
         }
     }
 
+    /**
+     * Verifica se la data fornita è valida: deve essere almeno 7 giorni dopo e non in un weekend.
+     *
+     * @param dataStr la data in formato stringa
+     * @return true se la data è valida, false altrimenti
+     */
     private boolean isDataValida(String dataStr) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        LocalDate dataSelezionata;
-
-        try {
-            dataSelezionata = LocalDate.parse(dataStr, formatter);
-        } catch (Exception e) {
-            System.out.println("Formato data non valido: " + dataStr);
-            return false;
-        }
-
+        LocalDate dataSelezionata = LocalDate.parse(dataStr, formatter);
         LocalDate oggi = LocalDate.now();
-        boolean almenoSetteGiorniDopo = dataSelezionata.isAfter(oggi.plusDays(6));
 
+        boolean almenoSetteGiorniDopo = dataSelezionata.isAfter(oggi.plusDays(6));
         DayOfWeek giorno = dataSelezionata.getDayOfWeek();
         boolean nonEWeekend = !(giorno == DayOfWeek.SATURDAY || giorno == DayOfWeek.SUNDAY);
-
         return almenoSetteGiorniDopo && nonEWeekend;
     }
 
-
+    /**
+     * Esegue l'operazione di inserimento appello dopo aver validato la data.
+     *
+     * @param currentController il controller corrente utilizzato per recuperare i dati
+     * @throws SQLException in caso di errore nell'inserimento
+     */
     private void eseguiOperazione(ControllerDocenteInserimentoAppello currentController) throws SQLException {
         String data = currentController.getDatiSelezionati();
 
@@ -122,19 +136,27 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
 
         String esame = currentController.controllerDocente.convertiNomeToCodicePiano(currentController.ScegliEsameLista);
 
-        controllerDocente.docente.setCommand(new CommandInserisciAppello( controllerDocente.connection, data, esame, ((IGetterDocente)controllerDocente.docente).getCf()));
+        controllerDocente.docente.setCommand(new CommandInserisciAppello(controllerDocente.connection, data, esame, ((IGetterDocente)controllerDocente.docente).getCf()));
 
         controllerDocente.docente.eseguiAzione();
     }
 
-
-
+    /**
+     * Restituisce la data selezionata nel DatePicker come stringa.
+     *
+     * @return la data selezionata, oppure stringa vuota se nulla
+     */
     public String getDatiSelezionati() {
         return DataAppelloButton.getValue() != null ? DataAppelloButton.getValue().toString() : "";
     }
 
-
-    private List<StateItem> recuperaAppelli() throws SQLException{
+    /**
+     * Recupera la lista di appelli associati al docente corrente.
+     *
+     * @return lista di oggetti StateItem rappresentanti gli appelli
+     * @throws SQLException in caso di errori durante il recupero dati
+     */
+    private List<StateItem> recuperaAppelli() throws SQLException {
         controllerDocente.docente.setCommand(new CommandGetAppelliPerDocente(controllerDocente.connection, ((IGetterDocente)controllerDocente.docente).getCf()));
         List<Map<String, Object>> listaAppelli = (List<Map<String, Object>>) controllerDocente.docente.eseguiAzione();
 
@@ -152,13 +174,17 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
 
             listaStateItems.add(item);
         }
+        System.out.println(listaAppelli);
         return listaStateItems;
-
     }
 
-
+    /**
+     * Chiude l'appello selezionato dopo conferma dell'utente.
+     *
+     * @param item l'appello da chiudere
+     */
     @FXML
-    private void chiudiAppello(StateItem item){
+    private void chiudiAppello(StateItem item) {
         String numeroAppello = item.getValore("numero_appello");
 
         Alert alert = UtilAlert.mostraConferma("Quest azione è irreversibile", "Conferma chiusura appello", "Sei sicuro di voler chiudere le prenotazioni?");

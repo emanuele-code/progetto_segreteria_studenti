@@ -9,15 +9,37 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * Classe che implementa le funzionalità della segreteria universitaria.
+ * Permette l'inserimento di studenti, aggiornamento del piano di studi,
+ * conferma dei voti e recupero di piani di studio e voti da confermare.
+ */
 public class DAOSegreteria implements ISegreteriaDAO {
     private final Connection connection;
 
-
+    /**
+     * Costruttore che accetta una connessione al database.
+     *
+     * @param connection Connessione JDBC al database
+     */
     public DAOSegreteria(Connection connection){
         this.connection = connection;
     }
 
-
+    /**
+     * Inserisce uno studente nel database.
+     *
+     * @param dati Array di stringhe contenente:
+     *             <ul>
+     *                 <li>dati[0] - nome</li>
+     *                 <li>dati[1] - cognome</li>
+     *                 <li>dati[2] - data di nascita</li>
+     *                 <li>dati[3] - residenza</li>
+     *                 <li>dati[4] - codice piano</li>
+     *                 <li>dati[5] - password</li>
+     *             </ul>
+     * @throws SQLException in caso di errore durante l'inserimento
+     */
     public void inserisciStudente(String[] dati)  throws SQLException {
         String query = "INSERT INTO STUDENTE (nome_studente, cognome_studente, data_nascita, residenza, stato_tasse, codice_piano, password) VALUES\n" +
                 "(?,?,?,?,?,?,?)";
@@ -34,7 +56,13 @@ public class DAOSegreteria implements ISegreteriaDAO {
         }
     }
 
-
+    /**
+     * Aggiorna il piano di studi di uno studente.
+     *
+     * @param matricola Matricola dello studente
+     * @param codiceCorso Codice del nuovo piano di studi
+     * @throws SQLException in caso di errore nell'aggiornamento
+     */
     public void cambiaPianoStudente(String matricola, String codiceCorso) throws SQLException {
         String query = "UPDATE STUDENTE SET CODICE_PIANO = ? WHERE MATRICOLA = ?";
         try(PreparedStatement statement = connection.prepareStatement(query)) {
@@ -50,11 +78,17 @@ public class DAOSegreteria implements ISegreteriaDAO {
         }
     }
 
-
+    /**
+     * Conferma il voto accettato dallo studente per un determinato appello.
+     *
+     * @param matricola Matricola dello studente
+     * @param numeroAppello Numero identificativo dell'appello
+     * @throws SQLException in caso di errore nell'aggiornamento
+     */
     public void confermaVoto(String matricola, String numeroAppello) throws SQLException {
         String query = " UPDATE PRENOTAZIONE " +
-                       " SET stato = 'confermato' " +
-                       " WHERE matricola = ? AND numero_appello = ? AND stato = 'accettato'";
+                " SET stato = 'confermato' " +
+                " WHERE matricola = ? AND numero_appello = ? AND stato = 'accettato'";
 
         try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setString(1, matricola);
@@ -64,7 +98,12 @@ public class DAOSegreteria implements ISegreteriaDAO {
         }
     }
 
-
+    /**
+     * Restituisce la lista dei piani di studio disponibili.
+     *
+     * @return Mappa con codice piano come chiave e nome piano come valore
+     * @throws SQLException in caso di errore durante la query
+     */
     public Map<Integer, String> getPianiDiStudio() throws SQLException {
         Map<Integer, String> pianiDiStudio = new HashMap<>();
         String query = "SELECT codice_piano, nome_piano FROM PIANO_STUDI"; // Cambia il nome della tabella se necessario
@@ -81,7 +120,12 @@ public class DAOSegreteria implements ISegreteriaDAO {
         return pianiDiStudio;
     }
 
-
+    /**
+     * Recupera la lista dei voti accettati che devono ancora essere confermati dalla segreteria.
+     *
+     * @return Lista di mappe con i dettagli dello studente e dell'appello
+     * @throws SQLException in caso di errore durante l'esecuzione della query
+     */
     public List<Map<String, Object>> getVotiDaConfermare() throws SQLException {
         String selectQuery = "SELECT D.nome_docente, D.cognome_docente, data_appello, P.matricola, A.numero_appello, P.voto, nome_esame, cfu FROM STUDENTE S " +
                 " JOIN PRENOTAZIONE P ON P.matricola = S.matricola " +

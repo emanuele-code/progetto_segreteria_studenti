@@ -1,8 +1,8 @@
 package Controllers;
 
 import Commands.CommandRicercaStudente;
-import Commands.RicercaStudentePerCredenziali;
-import Commands.RicercaStudentePerMatricola;
+import Strategy.RicercaStudentePerCredenziali;
+import Strategy.RicercaStudentePerMatricola;
 import Interfacce.IControllerBase;
 import Interfacce.IGetterStudente;
 import Interfacce.IRicercaStudenteStrategy;
@@ -18,13 +18,15 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * Controller per la visualizzazione delle informazioni sugli studenti nella vista della segreteria.
+ * Supporta la ricerca per matricola o per credenziali (nome e cognome).
+ */
 public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<ControllerSegreteria> {
     private ControllerSegreteria controllerSegreteria;
     private ObservableList<IGetterStudente> studentiObservableList;
 
-
-    @FXML public TableView<IGetterStudente>           tableRicerca;
+    @FXML public TableView<IGetterStudente> tableRicerca;
     @FXML public TableColumn<IGetterStudente, String> ColonnaNome;
     @FXML public TableColumn<IGetterStudente, String> ColonnaCognome;
     @FXML public TableColumn<IGetterStudente, String> ColonnaNomeEsame;
@@ -42,13 +44,22 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
     @FXML public TextField   cercaPerNome;
     @FXML public TextField   cercaMatricola;
 
-
+    /**
+     * Imposta il controller principale della segreteria.
+     *
+     * @param controllerSegreteria controller principale da collegare
+     * @throws SQLException se si verifica un errore nella comunicazione con il database
+     */
     public void setController(ControllerSegreteria controllerSegreteria) throws SQLException {
         this.controllerSegreteria = controllerSegreteria;
     }
 
-
-    @FXML public void mostraFormModalitaRicerca(){
+    /**
+     * Mostra l'interfaccia per scegliere la modalità di ricerca (matricola o credenziali).
+     * Configura i RadioButton e la visibilità dei campi in base alla selezione.
+     */
+    @FXML
+    public void mostraFormModalitaRicerca() {
         visualizzaModalitaRicerca.setVisible(true);
         ToggleGroup group = new ToggleGroup();
 
@@ -57,9 +68,9 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
 
         group.selectedToggleProperty().addListener((observable, oldToggle, newToggle) -> {
             if (newToggle == RadioMatricola) {
-                mostraCampoMatricola();    // Mostra il campo "matricola"
+                mostraCampoMatricola();
             } else if (newToggle == RadioCredenziali) {
-                mostraCampoCredenziali();  // Mostra i campi "nome" e "cognome"
+                mostraCampoCredenziali();
             }
         });
 
@@ -68,11 +79,16 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
         } else {
             mostraCampoCredenziali();
         }
-
     }
 
-
-    @FXML public void cercaStudente() throws SQLException {
+    /**
+     * Effettua la ricerca dello studente in base alla modalità selezionata (matricola o credenziali).
+     * Popola la TableView con i risultati ottenuti.
+     *
+     * @throws SQLException se la query fallisce
+     */
+    @FXML
+    public void cercaStudente() throws SQLException {
         List<IGetterStudente> listaStudenti = new ArrayList<>();
 
         if (RadioMatricola.isSelected()) {
@@ -82,62 +98,81 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
         }
 
         studentiObservableList = FXCollections.observableArrayList(listaStudenti);
-
         configuraColonne();
-
         visualizzaModalitaRicerca.setVisible(false);
     }
 
-
+    /**
+     * Esegue la ricerca per nome e cognome.
+     *
+     * @return lista di studenti trovati
+     * @throws SQLException in caso di errore SQL
+     */
     private List<IGetterStudente> cercaPerCredenziali() throws SQLException {
         String nome = cercaPerNome.getText().trim();
         String cognome = cercaPerCognome.getText().trim();
 
-
         if (nome.isEmpty() || cognome.isEmpty()) {
-            UtilAlert.mostraErrore("Compila tutti i campi prima di inserire lo studente.", "Errore", "Campi mancanti o errati");
+            UtilAlert.mostraErrore("Compila tutti i campi prima di inserire lo studente.",
+                    "Errore", "Campi mancanti o errati");
             return new ArrayList<>();
         }
 
-        IRicercaStudenteStrategy ricercaCredenziali = new RicercaStudentePerCredenziali(nome, cognome, controllerSegreteria.connection);
-        controllerSegreteria.segreteria.setCommand(new CommandRicercaStudente(ricercaCredenziali, controllerSegreteria.connection));
+        IRicercaStudenteStrategy ricercaCredenziali =
+                new RicercaStudentePerCredenziali(nome, cognome, controllerSegreteria.connection);
+
+        controllerSegreteria.segreteria.setCommand(
+                new CommandRicercaStudente(ricercaCredenziali, controllerSegreteria.connection));
+
         return (List<IGetterStudente>) controllerSegreteria.segreteria.eseguiAzione();
     }
 
-
+    /**
+     * Esegue la ricerca per matricola.
+     *
+     * @return lista di studenti trovati
+     * @throws SQLException in caso di errore SQL
+     */
     private List<IGetterStudente> cercaPerMatricola() throws SQLException {
         String matricola = cercaMatricola.getText().trim();
 
         if (matricola.isEmpty()) {
-            UtilAlert.mostraErrore("Inserisci sia il nome che il cognome.", "Errore", "Campi mancanti o errati");
+            UtilAlert.mostraErrore("Inserisci la matricola dello studente.",
+                    "Errore", "Campo mancante");
             return new ArrayList<>();
         }
 
-        IRicercaStudenteStrategy ricercaMatricola = new RicercaStudentePerMatricola(matricola);
-        controllerSegreteria.segreteria.setCommand(new CommandRicercaStudente(ricercaMatricola, controllerSegreteria.connection));
+        IRicercaStudenteStrategy ricercaMatricola =
+                new RicercaStudentePerMatricola(matricola);
+
+        controllerSegreteria.segreteria.setCommand(
+                new CommandRicercaStudente(ricercaMatricola, controllerSegreteria.connection));
+
         return (List<IGetterStudente>) controllerSegreteria.segreteria.eseguiAzione();
     }
 
-
+    /**
+     * Mostra solo il campo per la ricerca tramite matricola.
+     */
     private void mostraCampoMatricola() {
-        // Rende visibile solo il campo "matricola" e nasconde gli altri
         cercaMatricola.setVisible(true);
         cercaPerCognome.setVisible(false);
         cercaPerNome.setVisible(false);
     }
 
-
+    /**
+     * Mostra i campi per la ricerca tramite nome e cognome.
+     */
     private void mostraCampoCredenziali() {
-        // Rende visibili i campi "nome" e "cognome" e nasconde l'altro
         cercaMatricola.setVisible(false);
         cercaPerCognome.setVisible(true);
         cercaPerNome.setVisible(true);
     }
 
-
+    /**
+     * Configura le colonne della TableView con i dati provenienti da IGetterStudente.
+     */
     private void configuraColonne() {
-        // Configura le colonne della TableView per visualizzare i dati corretti
-
         ColonnaNome.setCellValueFactory(new PropertyValueFactory<>("nome"));
         ColonnaCognome.setCellValueFactory(new PropertyValueFactory<>("cognome"));
         ColonnaTasse.setCellValueFactory(new PropertyValueFactory<>("tassePagate"));
@@ -150,7 +185,4 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
 
         tableRicerca.setItems(studentiObservableList);
     }
-
-
-
 }

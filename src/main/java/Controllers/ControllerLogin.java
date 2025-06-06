@@ -1,6 +1,7 @@
 package Controllers;
 
 import Interfacce.IAutenticazioneDAO;
+import Models.UtenteFactory;
 import Proxy.ProxyAutenticazione;
 import Utils.UtilAlert;
 import javafx.application.Platform;
@@ -17,8 +18,11 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+/**
+ * Controller per la gestione del login degli utenti (Segreteria, Docente, Studente).
+ * Estende {@link ControllerDB} per l'accesso alla connessione al database.
+ */
 public class ControllerLogin extends ControllerDB {
-    //private UtilAutenticazione autenticazione;
     private IAutenticazioneDAO autenticazione;
     private String ruolo;
     private String credenziale;
@@ -32,26 +36,37 @@ public class ControllerLogin extends ControllerDB {
     @FXML public TextField PasswordStudente;
     @FXML public TabPane   tabPane;
 
-
+    /**
+     * Inizializza il controller, impostando il proxy di autenticazione.
+     * Viene eseguito automaticamente al caricamento della scena.
+     */
     @FXML
-    public void initialize(){
+    public void initialize() {
         Platform.runLater(() -> {
             try {
                 this.autenticazione = new ProxyAutenticazione(connection);
-                //this.autenticazione = new UtilAutenticazione(connection);
-            } catch(Exception e){
+            } catch (Exception e) {
                 throw new RuntimeException(e);
             }
         });
     }
 
-
+    /**
+     * Imposta la connessione al database.
+     *
+     * @param connection la connessione al database da utilizzare
+     */
     @Override
     public void setConnection(Connection connection) {
         this.connection = connection;
     }
 
-    @FXML private void handleLogin() {
+    /**
+     * Gestisce l'evento di login, verifica le credenziali e carica la pagina successiva
+     * in caso di autenticazione corretta. Mostra un alert in caso contrario.
+     */
+    @FXML
+    private void handleLogin() {
         String tabId = getTabSelezionato();
         switch (tabId) {
             case "segreteria":
@@ -71,17 +86,26 @@ public class ControllerLogin extends ControllerDB {
                 break;
         }
 
-        if(autenticazione.isUtenteAutenticato(ruolo, credenziale, password)){
+        if (autenticazione.isUtenteAutenticato(ruolo, credenziale, password)) {
             apriProssimaPagina();
         } else {
-            UtilAlert.mostraErrore("Le credenziali sono errate", "Inserisci Credenziali corrette", "Credenziali errate");
+            UtilAlert.mostraErrore(
+                    "Le credenziali sono errate",
+                    "Inserisci Credenziali corrette",
+                    "Credenziali errate"
+            );
         }
     }
 
-    @FXML private void apriProssimaPagina() {
+    /**
+     * Apre la scena successiva in base al ruolo autenticato.
+     * Carica la FXML appropriata e passa le credenziali necessarie.
+     */
+    @FXML
+    private void apriProssimaPagina() {
         String tabId = getTabSelezionato();
-
         String fxmlFile = "";
+
         switch (tabId) {
             case "segreteria":
                 fxmlFile = "../SegreteriaFXML/SegreteriaPage.fxml";
@@ -93,10 +117,17 @@ public class ControllerLogin extends ControllerDB {
                 fxmlFile = "../StudenteFXML/StudentePage.fxml";
                 break;
         }
+
         caricaProssimaPagina(fxmlFile);
     }
 
-    private void caricaProssimaPagina(String fxmlFile){
+    /**
+     * Carica e mostra la nuova pagina FXML in base al percorso specificato.
+     * Imposta la connessione e inizializza l'oggetto specifico del ruolo.
+     *
+     * @param fxmlFile il percorso al file FXML da caricare
+     */
+    private void caricaProssimaPagina(String fxmlFile) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
@@ -106,12 +137,11 @@ public class ControllerLogin extends ControllerDB {
                 ((ControllerDB) controller).setConnection(this.connection);
             }
 
-            if(ruolo.equals("docente")){
-                ((ControllerDocente) controller).setCodiceFiscale(credenziale);
-            } else if(ruolo.equals("studente")){
+            if (ruolo.equals("docente")) {
+                ((ControllerDocente) controller).creaDocente(credenziale);
+            } else if (ruolo.equals("studente")) {
                 ((ControllerStudente) controller).creaStudente(credenziale);
             }
-
 
             Scene currentScene = tabPane.getScene();
             Stage stage = (Stage) currentScene.getWindow();
@@ -124,6 +154,11 @@ public class ControllerLogin extends ControllerDB {
         }
     }
 
+    /**
+     * Recupera l'ID del tab attualmente selezionato (segreteria, docente, studente).
+     *
+     * @return l'ID del tab selezionato
+     */
     private String getTabSelezionato() {
         Tab selectedTab = tabPane.getSelectionModel().getSelectedItem();
         return selectedTab.getId();

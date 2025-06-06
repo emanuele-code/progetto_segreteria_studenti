@@ -17,17 +17,25 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
+ * Controller responsabile per la gestione della conferma voti da parte della segreteria.
+ * Questa classe si occupa di visualizzare i voti da confermare e consente l'approvazione finale.
+ */
 public class ControllerSegreteriaConfermaVoti implements IControllerBase<ControllerSegreteria> {
 
     private ControllerSegreteria controllerSegreteria;
 
     @FXML public TableView<StateItem> tableConferme;
 
-
+    /**
+     * Inizializza la tabella dei voti da confermare con le relative colonne e pulsanti di conferma.
+     * Viene eseguito automaticamente dal framework JavaFX al caricamento della FXML.
+     */
     @FXML
     public void initialize() {
         Platform.runLater(() -> {
             try {
+                // Configura colonne della TableView
                 Map<String, Function<StateItem, ?>> colonneMappa = Map.of(
                         "Matricola", item -> item.getCampo("matricola").get(),
                         "Appello", item -> item.getCampo("numero_appello").get(),
@@ -37,29 +45,42 @@ public class ControllerSegreteriaConfermaVoti implements IControllerBase<Control
                         "Esame", item -> item.getCampo("nome_esame").get(),
                         "CFU", item -> item.getCampo("cfu").get()
                 );
+
                 UtilGestoreTableView.configuraColonne(tableConferme, colonneMappa);
 
+                // Aggiunge pulsante "Conferma" per ogni riga
                 UtilGestoreTableView.aggiungiColonnaBottone(tableConferme, "Conferma",
                         item -> true,
                         item -> "Conferma",
                         item -> () -> eseguiConfermaVoto(item)
                 );
 
+                // Popola la tabella con i dati da confermare
                 ObservableList<StateItem> listaStateItems = FXCollections.observableArrayList(getVotiDaConfermare());
                 tableConferme.setItems(listaStateItems);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
-
     }
 
+    /**
+     * Imposta il controller principale della segreteria, usato per accedere a connessione e comandi.
+     *
+     * @param controllerSegreteria controller della vista principale
+     * @throws SQLException in caso di errori durante l'inizializzazione
+     */
     @Override
     public void setController(ControllerSegreteria controllerSegreteria) throws SQLException {
         this.controllerSegreteria = controllerSegreteria;
     }
 
-
+    /**
+     * Recupera l'elenco dei voti da confermare dal database.
+     *
+     * @return lista di {@link StateItem} rappresentanti i voti in sospeso
+     * @throws SQLException se il comando di recupero fallisce
+     */
     private List<StateItem> getVotiDaConfermare() throws SQLException {
         controllerSegreteria.segreteria.setCommand(new CommandGetVotiDaConfermare(controllerSegreteria.connection));
         List<Map<String, Object>> listaVoti = (List<Map<String, Object>>) controllerSegreteria.segreteria.eseguiAzione();
@@ -82,15 +103,27 @@ public class ControllerSegreteriaConfermaVoti implements IControllerBase<Control
         return listaStateItems;
     }
 
-
-    private void eseguiConfermaVoto(StateItem item){
+    /**
+     * Esegue la conferma del voto per lo studente selezionato.
+     * Mostra un popup di conferma prima dell'invio.
+     *
+     * @param item riga della tabella selezionata contenente i dati del voto
+     */
+    private void eseguiConfermaVoto(StateItem item) {
         String matricola     = (String) item.getCampo("matricola").get();
         String numeroAppello = (String) item.getCampo("numero_appello").get();
 
-        Alert alert = UtilAlert.mostraConferma("Quest azione è irreversibile", "Conferma voto", "Sei sicuro di voler inserire il voto?");
+        Alert alert = UtilAlert.mostraConferma(
+                "Quest'azione è irreversibile",
+                "Conferma voto",
+                "Sei sicuro di voler inserire il voto?"
+        );
+
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
-                controllerSegreteria.segreteria.setCommand(new CommandConfermaVoto(controllerSegreteria.connection, matricola, numeroAppello));
+                controllerSegreteria.segreteria.setCommand(
+                        new CommandConfermaVoto(controllerSegreteria.connection, matricola, numeroAppello)
+                );
                 try {
                     controllerSegreteria.segreteria.eseguiAzione();
                 } catch (SQLException e) {
@@ -99,5 +132,4 @@ public class ControllerSegreteriaConfermaVoti implements IControllerBase<Control
             }
         });
     }
-
 }

@@ -9,11 +9,30 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Classe principale dell'applicazione Segreteria Studenti.
+ * <p>
+ * Estende {@link Application} di JavaFX e gestisce l'avvio dell'interfaccia grafica.
+ * All'avvio, stabilisce la connessione al database e carica la pagina di login.
+ * </p>
+ * <p>
+ * Contiene anche un main di avvio dell'applicazione.
+ * </p>
+ *
+ * @author Emanuele Pacilio
+ * @version 1.0
+ */
 public class SegreteriaStudenti extends Application {
 
+    /**
+     * Metodo principale di avvio dell'applicazione JavaFX.
+     *
+     * @param primaryStage Lo stage principale su cui caricare la scena.
+     * @throws Exception se si verifica un errore durante il caricamento della GUI o la connessione al database.
+     */
     @Override
     public void start(Stage primaryStage) throws Exception {
-         try {
+        try {
             Connection connection = DatabaseSegreteria.getConnection();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("loginPage.fxml"));
             Parent root = loader.load();
@@ -24,39 +43,17 @@ public class SegreteriaStudenti extends Application {
             primaryStage.setScene(new Scene(root));
             primaryStage.setResizable(false); // Impedisce il ridimensionamento della finestra
             primaryStage.show();
-        } catch(IOException e) {
-             e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
-
-    public static void main( String[] args ) {
+    /**
+     * Metodo main per lanciare l'applicazione JavaFX.
+     *
+     * @param args Argomenti della linea di comando.
+     */
+    public static void main(String[] args) {
         launch(args);
-
-/*
-        boolean flag = true;
-        try (Scanner scanner = new Scanner(System.in); Connection connection = DatabaseSegreteria.getConnection()) {
-            while(flag){
-                Autenticazione auth = new Autenticazione(connection);
-
-                System.out.println("Scegli un'opzione:");
-                System.out.println("1. Segreteria");
-                System.out.println("2. Studente");
-                System.out.println("3. Docente");
-                System.out.println("4. Termina");
-
-                int scelta = scanner.nextInt();
-                scanner.nextLine();
-
-                UtenteFacade menuFacade = new UtenteFacade(scanner, connection, auth);
-                flag = menuFacade.gestisciRuolo(scelta);
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
- */
     }
 }
