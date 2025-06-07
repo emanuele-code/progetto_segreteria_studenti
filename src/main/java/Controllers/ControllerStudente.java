@@ -3,6 +3,7 @@ package Controllers;
 import Interfacce.ICambioScena;
 import Interfacce.ISetCommand;
 import Models.UtenteFactory;
+import Utils.DatabaseSegreteria;
 import Utils.UtilGestoreScena;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -41,7 +42,7 @@ public class ControllerStudente extends ControllerLogin implements ICambioScena 
      */
     @FXML
     public void handleExit(javafx.event.ActionEvent event) {
-        UtilGestoreScena.handleExit(event, connection);
+        UtilGestoreScena.handleExit(event, connessione);
     }
 
     /**
@@ -52,6 +53,6 @@ public class ControllerStudente extends ControllerLogin implements ICambioScena 
      * @throws SQLException in caso di errore nel recupero dal database
      */
     public void creaStudente(String matricola) throws SQLException {
-        studente = UtenteFactory.creaStudenteDaMatricola(matricola, connection).get(0);
+        studente = UtenteFactory.creaStudenteDaMatricola(matricola, DatabaseSegreteria.getConnection()).get(0);
     }
 }

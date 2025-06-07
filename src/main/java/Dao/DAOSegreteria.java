@@ -69,12 +69,7 @@ public class DAOSegreteria implements ISegreteriaDAO {
             statement.setString(1, codiceCorso);
             statement.setString(2, matricola);
 
-            int rowsUpdated = statement.executeUpdate();
-            if (rowsUpdated > 0) {
-                System.out.println("Il piano di studi è stato aggiornato con successo.");
-            } else {
-                System.out.println("Nessuno studente trovato con la matricola: " + matricola);
-            }
+            statement.executeUpdate();
         }
     }
 

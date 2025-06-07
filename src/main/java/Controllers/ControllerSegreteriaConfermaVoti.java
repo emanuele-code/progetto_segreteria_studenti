@@ -82,7 +82,7 @@ public class ControllerSegreteriaConfermaVoti implements IControllerBase<Control
      * @throws SQLException se il comando di recupero fallisce
      */
     private List<StateItem> getVotiDaConfermare() throws SQLException {
-        controllerSegreteria.segreteria.setCommand(new CommandGetVotiDaConfermare(controllerSegreteria.connection));
+        controllerSegreteria.segreteria.setCommand(new CommandGetVotiDaConfermare(controllerSegreteria.connessione));
         List<Map<String, Object>> listaVoti = (List<Map<String, Object>>) controllerSegreteria.segreteria.eseguiAzione();
 
         ObservableList<StateItem> listaStateItems = FXCollections.observableArrayList();
@@ -122,7 +122,7 @@ public class ControllerSegreteriaConfermaVoti implements IControllerBase<Control
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 controllerSegreteria.segreteria.setCommand(
-                        new CommandConfermaVoto(controllerSegreteria.connection, matricola, numeroAppello)
+                        new CommandConfermaVoto(controllerSegreteria.connessione, matricola, numeroAppello)
                 );
                 try {
                     controllerSegreteria.segreteria.eseguiAzione();

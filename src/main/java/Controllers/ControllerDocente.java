@@ -5,6 +5,7 @@ import Interfacce.ICambioScena;
 import Interfacce.IGetterDocente;
 import Interfacce.ISetCommand;
 import Models.UtenteFactory;
+import Utils.DatabaseSegreteria;
 import Utils.UtilGestoreScena;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -51,7 +52,7 @@ public class ControllerDocente extends ControllerLogin implements ICambioScena {
      */
     @FXML
     public void handleExit(javafx.event.ActionEvent event) {
-        UtilGestoreScena.handleExit(event, connection);
+        UtilGestoreScena.handleExit(event, connessione);
     }
 
     /**
@@ -79,7 +80,7 @@ public class ControllerDocente extends ControllerLogin implements ICambioScena {
      * @throws SQLException se si verifica un errore nell'accesso al database
      */
     protected Map<String, String> caricaEsami(ComboBox<String> comboBox) throws SQLException {
-        docente.setCommand(new CommandGetEsamiInsegnati(connection, ((IGetterDocente)docente).getCf()));
+        docente.setCommand(new CommandGetEsamiInsegnati(connessione, ((IGetterDocente)docente).getCf()));
         mappa = (Map<String, String>)docente.eseguiAzione();
 
         for (Map.Entry<String, String> entry : mappa.entrySet()) {
@@ -96,7 +97,7 @@ public class ControllerDocente extends ControllerLogin implements ICambioScena {
      * @throws SQLException se si verifica un errore durante l'accesso al database
      */
     protected void creaDocente(String codiceFiscale) throws SQLException {
-        docente = UtenteFactory.creaDocente(codiceFiscale, connection);
+        docente = UtenteFactory.creaDocente(codiceFiscale, DatabaseSegreteria.getConnection());
     }
 
 }

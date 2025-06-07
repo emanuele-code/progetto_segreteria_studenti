@@ -136,7 +136,7 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
 
         String esame = currentController.controllerDocente.convertiNomeToCodicePiano(currentController.ScegliEsameLista);
 
-        controllerDocente.docente.setCommand(new CommandInserisciAppello(controllerDocente.connection, data, esame, ((IGetterDocente)controllerDocente.docente).getCf()));
+        controllerDocente.docente.setCommand(new CommandInserisciAppello(controllerDocente.connessione, data, esame, ((IGetterDocente)controllerDocente.docente).getCf()));
 
         controllerDocente.docente.eseguiAzione();
     }
@@ -157,7 +157,7 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
      * @throws SQLException in caso di errori durante il recupero dati
      */
     private List<StateItem> recuperaAppelli() throws SQLException {
-        controllerDocente.docente.setCommand(new CommandGetAppelliPerDocente(controllerDocente.connection, ((IGetterDocente)controllerDocente.docente).getCf()));
+        controllerDocente.docente.setCommand(new CommandGetAppelliPerDocente(controllerDocente.connessione, ((IGetterDocente)controllerDocente.docente).getCf()));
         List<Map<String, Object>> listaAppelli = (List<Map<String, Object>>) controllerDocente.docente.eseguiAzione();
 
         ObservableList<StateItem> listaStateItems = FXCollections.observableArrayList();
@@ -191,7 +191,7 @@ public class ControllerDocenteInserimentoAppello implements IControllerBase<Cont
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 try {
-                    controllerDocente.docente.setCommand(new CommandChiudiPrenotazione(numeroAppello, controllerDocente.connection));
+                    controllerDocente.docente.setCommand(new CommandChiudiPrenotazione(numeroAppello, controllerDocente.connessione));
                     controllerDocente.docente.eseguiAzione();
                 } catch (SQLException e) {
                     throw new RuntimeException(e);

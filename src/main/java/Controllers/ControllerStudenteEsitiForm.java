@@ -109,7 +109,7 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
      */
     private List<StateItem> recuperaEsiti() throws SQLException {
         controllerStudente.studente.setCommand(
-                new CommandGetEsiti(controllerStudente.connection,
+                new CommandGetEsiti(controllerStudente.connessione,
                         ((IGetterStudente) controllerStudente.studente).getMatricola())
         );
 
@@ -169,7 +169,7 @@ public class ControllerStudenteEsitiForm implements IControllerBase<ControllerSt
         String matricola     = ((IGetterStudente) controllerStudente.studente).getMatricola();
 
         controllerStudente.studente.setCommand(
-                new CommandConfermaVoti(controllerStudente.connection, scelta, matricola, numeroAppello));
+                new CommandConfermaVoti(controllerStudente.connessione, scelta, matricola, numeroAppello));
         controllerStudente.studente.eseguiAzione();
     }
 

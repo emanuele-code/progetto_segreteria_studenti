@@ -43,7 +43,7 @@ public class ControllerSegreteria extends ControllerLogin implements ICambioScen
      */
     @FXML
     public void handleExit(javafx.event.ActionEvent event) {
-        UtilGestoreScena.handleExit(event, connection);
+        UtilGestoreScena.handleExit(event, connessione);
     }
 
     /**
@@ -73,7 +73,7 @@ public class ControllerSegreteria extends ControllerLogin implements ICambioScen
      * @throws SQLException se si verifica un errore nel recupero dei dati dal database
      */
     protected Map<Integer, String> caricaPianiDiStudio(ComboBox<String> comboBox) throws SQLException {
-        segreteria.setCommand(new CommandGetPianiStudio(connection));
+        segreteria.setCommand(new CommandGetPianiStudio(connessione));
         mappa = (Map<Integer, String>) segreteria.eseguiAzione();
         comboBox.getItems().clear();
 

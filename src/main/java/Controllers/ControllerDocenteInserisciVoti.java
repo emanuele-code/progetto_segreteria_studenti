@@ -90,7 +90,7 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
      * @throws SQLException in caso di errori nel database
      */
     private List<StateItem> recuperaPrenotati() throws SQLException {
-        controllerDocente.docente.setCommand(new CommandGetPrenotazioni(controllerDocente.connection, ((IGetterDocente)controllerDocente.docente).getCf()));
+        controllerDocente.docente.setCommand(new CommandGetPrenotazioni(controllerDocente.connessione, ((IGetterDocente)controllerDocente.docente).getCf()));
         List<Map<String, Object>> listaPrenotati = (List<Map<String, Object>>) controllerDocente.docente.eseguiAzione();
 
         ObservableList<StateItem> listStateItems = FXCollections.observableArrayList();
@@ -128,7 +128,7 @@ public class ControllerDocenteInserisciVoti implements IControllerBase<Controlle
         String matricola = (String) item.getCampo("matricola").get();
         String voto = (String) item.getCampo("voto").get();
 
-        controllerDocente.docente.setCommand(new CommandInserisciVoto(controllerDocente.connection, voto, matricola, numeroAppello));
+        controllerDocente.docente.setCommand(new CommandInserisciVoto(controllerDocente.connessione, voto, matricola, numeroAppello));
         controllerDocente.docente.eseguiAzione();
     }
 

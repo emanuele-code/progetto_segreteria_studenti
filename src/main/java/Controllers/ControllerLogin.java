@@ -3,6 +3,7 @@ package Controllers;
 import Interfacce.IAutenticazioneDAO;
 import Models.UtenteFactory;
 import Proxy.ProxyAutenticazione;
+import Utils.DatabaseSegreteria;
 import Utils.UtilAlert;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,9 +21,9 @@ import java.sql.SQLException;
 
 /**
  * Controller per la gestione del login degli utenti (Segreteria, Docente, Studente).
- * Estende {@link ControllerDB} per l'accesso alla connessione al database.
  */
-public class ControllerLogin extends ControllerDB {
+public class ControllerLogin {
+    protected Connection connessione;
     private IAutenticazioneDAO autenticazione;
     private String ruolo;
     private String credenziale;
@@ -44,7 +45,8 @@ public class ControllerLogin extends ControllerDB {
     public void initialize() {
         Platform.runLater(() -> {
             try {
-                this.autenticazione = new ProxyAutenticazione(connection);
+                this.connessione = DatabaseSegreteria.getConnection();
+                this.autenticazione = new ProxyAutenticazione(DatabaseSegreteria.getConnection());
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
@@ -56,10 +58,10 @@ public class ControllerLogin extends ControllerDB {
      *
      * @param connection la connessione al database da utilizzare
      */
-    @Override
-    public void setConnection(Connection connection) {
-        this.connection = connection;
-    }
+//    @Override
+//    public void setConnection(Connection connection) {
+//        this.connessione = connection;
+//    }
 
     /**
      * Gestisce l'evento di login, verifica le credenziali e carica la pagina successiva
@@ -133,9 +135,6 @@ public class ControllerLogin extends ControllerDB {
             Parent root = loader.load();
 
             Object controller = loader.getController();
-            if (controller instanceof ControllerDB) {
-                ((ControllerDB) controller).setConnection(this.connection);
-            }
 
             if (ruolo.equals("docente")) {
                 ((ControllerDocente) controller).creaDocente(credenziale);

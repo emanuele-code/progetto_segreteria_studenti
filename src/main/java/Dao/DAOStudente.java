@@ -241,7 +241,6 @@ public class DAOStudente implements IStudenteDAO {
             }
         }
 
-        System.out.println(listaAppelli);
         return listaAppelli;
     }
 

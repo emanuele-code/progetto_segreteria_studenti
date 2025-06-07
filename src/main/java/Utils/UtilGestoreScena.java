@@ -198,10 +198,10 @@ public class UtilGestoreScena {
             FXMLLoader loader = new FXMLLoader(UtilGestoreScena.class.getResource(fxmlFile));
             Parent root = loader.load();
 
-            Object controller = loader.getController();
-            if (controller instanceof ControllerLogin) {
-                ((ControllerLogin) controller).setConnection(connection);
-            }
+            // Object controller = loader.getController();
+//            if (controller instanceof ControllerLogin) {
+//                ((ControllerLogin) controller).setConnection(connection);
+//            }
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));

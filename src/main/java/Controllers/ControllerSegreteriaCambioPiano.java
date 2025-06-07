@@ -73,7 +73,7 @@ public class ControllerSegreteriaCambioPiano implements IControllerBase<Controll
         String matricola = TextMatricolaCambiaPiano.getText().trim();
 
         controllerSegreteria.segreteria.setCommand(
-                new CommandCambiaPianoStudente(controllerSegreteria.connection, matricola, codicePiano)
+                new CommandCambiaPianoStudente(controllerSegreteria.connessione, matricola, codicePiano)
         );
         controllerSegreteria.segreteria.eseguiAzione();
 

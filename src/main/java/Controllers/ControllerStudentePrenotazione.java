@@ -87,7 +87,7 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         String matricola = ((IGetterStudente) controllerStudente.studente).getMatricola();
 
         controllerStudente.studente.setCommand(
-                new CommandGetAppelliPerStudente(controllerStudente.connection, nomePiano, matricola)
+                new CommandGetAppelliPerStudente(controllerStudente.connessione, nomePiano, matricola)
         );
 
         List<Map<String, Object>> listaAppelli = (List<Map<String, Object>>) controllerStudente.studente.eseguiAzione();
@@ -129,7 +129,7 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 controllerStudente.studente.setCommand(
-                        new CommandPrenotaEsame(controllerStudente.connection, numeroAppello, matricola)
+                        new CommandPrenotaEsame(controllerStudente.connessione, numeroAppello, matricola)
                 );
 
                 try {
@@ -160,7 +160,7 @@ public class ControllerStudentePrenotazione implements IControllerBase<Controlle
         alert.showAndWait().ifPresent(response -> {
             if (response == ButtonType.OK) {
                 controllerStudente.studente.setCommand(
-                        new CommandEliminaPrenotazione(controllerStudente.connection, matricola, numeroAppello)
+                        new CommandEliminaPrenotazione(controllerStudente.connessione, matricola, numeroAppello)
                 );
 
                 try {

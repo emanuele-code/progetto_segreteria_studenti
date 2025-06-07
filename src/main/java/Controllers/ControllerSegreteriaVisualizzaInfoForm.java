@@ -119,10 +119,10 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
         }
 
         IRicercaStudenteStrategy ricercaCredenziali =
-                new RicercaStudentePerCredenziali(nome, cognome, controllerSegreteria.connection);
+                new RicercaStudentePerCredenziali(nome, cognome, controllerSegreteria.connessione);
 
         controllerSegreteria.segreteria.setCommand(
-                new CommandRicercaStudente(ricercaCredenziali, controllerSegreteria.connection));
+                new CommandRicercaStudente(ricercaCredenziali, controllerSegreteria.connessione));
 
         return (List<IGetterStudente>) controllerSegreteria.segreteria.eseguiAzione();
     }
@@ -146,7 +146,7 @@ public class ControllerSegreteriaVisualizzaInfoForm implements IControllerBase<C
                 new RicercaStudentePerMatricola(matricola);
 
         controllerSegreteria.segreteria.setCommand(
-                new CommandRicercaStudente(ricercaMatricola, controllerSegreteria.connection));
+                new CommandRicercaStudente(ricercaMatricola, controllerSegreteria.connessione));
 
         return (List<IGetterStudente>) controllerSegreteria.segreteria.eseguiAzione();
     }

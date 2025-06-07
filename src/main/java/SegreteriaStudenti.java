@@ -33,11 +33,8 @@ public class SegreteriaStudenti extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         try {
-            Connection connection = DatabaseSegreteria.getConnection();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("loginPage.fxml"));
             Parent root = loader.load();
-            ControllerLogin controller = loader.getController();
-            controller.setConnection(connection);
 
             primaryStage.setTitle("Gestione Segreteria");
             primaryStage.setScene(new Scene(root));

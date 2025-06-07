@@ -120,7 +120,7 @@ public class ControllerStudentePianoStudi implements IControllerBase<ControllerS
     private List<StateItem> recuperaLibretto() throws SQLException {
         controllerStudente.studente.setCommand(
                 new CommandGetLibretto(
-                        controllerStudente.connection,
+                        controllerStudente.connessione,
                         ((IGetterStudente) controllerStudente.studente).getMatricola()
                 )
         );
